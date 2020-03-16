@@ -10,7 +10,7 @@
 ## Issues
 使用的时候遇到任何问题或有好的建议，请点击进入[issue](https://github.com/yelloxing/iCrush/issues)！
 
-因为是学习项目，我们目前不打算给出使用文档，不过我们有一个[完整用例](https://github.com/yelloxing/iCrush/tree/master/demo)可供参考，里面会提供各种用法并添加好备注。
+因为是学习项目，我们目前不打算给出使用文档，不过我们有一个[完整用例](https://github.com/yelloxing/iCrush/tree/version-0.1/demo)可供参考，里面会提供各种用法并添加好备注。
 
 ## How to use?
 如果你开发的是一个web项目，直接在页面引入打包后的文件后即可（在代码中通过iCrush调用）：
