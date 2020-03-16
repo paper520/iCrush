@@ -12,6 +12,10 @@ module.exports = {
       exclude: /node_modules/,
       loader: "babel-loader"
     }, {
+      test: /\.ic$/,
+      exclude: /node_modules/,
+      loader: [path.resolve(__dirname, '../../webpack/icrush-loader.js')] // 测试icrush-loader
+    }, {
       test: /\.(png|jpg|jpeg|gif|bmp)$/,
       use: [{
         loader: "url-loader",
@@ -22,14 +26,14 @@ module.exports = {
         }
       }]
     }, {
-      test: /\.(css|scss)$/,
-      use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
+      test: /\.css$/,
+      use: ['style-loader', 'css-loader', 'postcss-loader']
     }]
   },
   resolve: {
     extensions: [".js"],
     alias: {
-      "iCrush": path.join(process.cwd(), "../dist/iCrush.babel.js")
+      "iCrush": path.join(process.cwd(), "../../dist/iCrush.babel.js")
     }
   },
 };

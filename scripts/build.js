@@ -1,7 +1,7 @@
 const fs = require('fs');
 const rollup = require('rollup');
 const Terser = require('terser');
-const babel = require('babel-core');
+const babel = require('@babel/core');
 const rollupPluginNodeResolve = require('rollup-plugin-node-resolve');
 const rollupPluginCommonjs = require('rollup-plugin-commonjs');
 
