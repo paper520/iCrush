@@ -12,7 +12,7 @@ module.exports = {
       exclude: /node_modules/,
       loader: "babel-loader"
     }, {
-      test: /\.ic$/,
+      test: /\.iCrush$/,
       exclude: /node_modules/,
       loader: [path.resolve(__dirname, '../../webpack/icrush-loader.js')] // 测试icrush-loader
     }, {

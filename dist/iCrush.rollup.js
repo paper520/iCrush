@@ -65,11 +65,22 @@
     function initMixin(iCrush) {
 
         // 对象初始化
-        iCrush.prototype.__init = function (options) {
+        iCrush.prototype.$$init = function (options = {}) {
 
-            this.$uid = uid++;
+            this.$options = options;
 
-            //  todo
+            // 唯一标志
+            this.__uid = uid++;
+
+            // 标记是iCrush对象
+            this.__isICrush = true;
+
+            // 需要双向绑定的数据
+            this._data = isFunction(options.data) ? options.data() : options.data;
+            
+            // 挂载点
+            this._el = document.querySelector(options.el);
+
 
         };
 
@@ -85,15 +96,13 @@
         // 生命周期调用钩子
         // 整个过程，进行到对应时期，都需要调用一下这里对应的钩子
         // 整合在一起的目的是方便维护
-        iCrush.prototype.__lifecycle = function (callbackName) {
+        iCrush.prototype.$$lifecycle = function (callbackName) {
 
             // beforeCreate
             if (isFunction(callbackName)) {
                 callbackName();
                 return;
             }
-
-            debugger
 
             if ([
 
@@ -109,8 +118,8 @@
                 // 销毁组件
                 'beforeDestroy', 'destroyed'
 
-            ].indexOf(callbackName) > -1 && isFunction(this[callbackName])) {
-                this[callbackName].call(this);
+            ].indexOf(callbackName) > -1 && isFunction(this.$options[callbackName])) {
+                this.$options[callbackName].call(this);
             }
 
         };
@@ -166,24 +175,24 @@
             throw new Error('iCrush is a constructor and should be called with the `new` keyword');
         }
 
-        this.__lifecycle(options.beforeCreate);
+        this.$$lifecycle(options.beforeCreate);
 
         // 初始化对象
-        this.__init(options);
+        this.$$init(options);
 
-        this.__lifecycle('created');
+        this.$$lifecycle('created');
 
         // 如果没有设置挂载点
         // 表示该组件不挂载
         // 不挂载的话，render或template也不会去解析
         // 或许可以在一定阶段以后，在主动去挂载，这样有益于提高效率
         if (isElement(this.el)) {
-            this.__lifecycle('beforeMount');
+            this.$$lifecycle('beforeMount');
 
             // 挂载组件到页面
-            this.__mount(this.el);
+            this.$$mount(this.el);
 
-            this.__lifecycle('mounted');
+            this.$$lifecycle('mounted');
         }
 
     }
@@ -195,16 +204,18 @@
     lifecycleMixin(iCrush);// 和组件的生命周期相关调用
 
     /**
-     * 备注：__开头的表示内置方法，$$开头的表示内置资源
+     * 备注：
+     * $$开头的表示内部方法，__开头的表示内部资源
+     * $开头的表示对外暴露的内置方法，_开头表示的是对外只读的内置资源
      * =========================================
      * 整合全部资源，对外暴露调用接口
      */
 
     // 把组件挂载到页面中去
-    iCrush.prototype.__mount = function (el) {
+    iCrush.prototype.$$mount = function (el) {
 
       // todo
-      
+
     };
 
     // 根据运行环境，导出接口

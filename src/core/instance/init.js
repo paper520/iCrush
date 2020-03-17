@@ -5,18 +5,31 @@
  */
 
 import isFunction from '@yelloxing/core.js/isFunction';
+import isString from '@yelloxing/core.js/isString';
 
 let uid = 1;
 
 export function initMixin(iCrush) {
 
     // 对象初始化
-    iCrush.prototype.__init = function (options) {
+    iCrush.prototype.$$init = function (options = {}) {
 
-        this.$uid = uid++;
-        options = options || {};
+        this.$options = options;
 
-        //  todo
+        // 唯一标志
+        this.__uid = uid++;
+
+        // 标记是iCrush对象
+        this.__isICrush = true;
+
+        // 需要双向绑定的数据
+        this._data = isFunction(options.data) ? options.data() : options.data;
+
+        // 挂载点
+        this._el = isString(options.el) ? document.querySelector(options.el) : options.el;
+
+        // 记录状态
+        this.__isMounted = false; this.__isDestroyed = false;
 
     };
 

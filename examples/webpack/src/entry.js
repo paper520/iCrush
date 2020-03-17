@@ -5,10 +5,10 @@ import '@yelloxing/normalize.css';
 import './styles/root.css';
 
 // 引入主页面
-import App from './App.ic';
+import App from './App.iCrush';
 
 // 根对象
-window.vm = new iCrush({
+window.icrush = new iCrush({
 
   //挂载点
   el: document.getElementById('root'),
