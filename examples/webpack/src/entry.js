@@ -14,6 +14,6 @@ window.vm = new iCrush({
   el: document.getElementById('root'),
 
   // 配置启动方法
-  render: createElement => createElement(App),
+  render: createElement => createElement(App)
 
 });

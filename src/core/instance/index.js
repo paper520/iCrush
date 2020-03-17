@@ -7,13 +7,32 @@ import { initMixin } from './init';
 import { eventsMixin } from './events'
 import { lifecycleMixin } from './lifecycle';
 import { renderMixin } from './render';
+import isElement from '@yelloxing/core.js/isElement';
 
 function iCrush(options) {
     if (!(this instanceof iCrush)) {
         throw new Error('iCrush is a constructor and should be called with the `new` keyword');
     }
 
-    //   todo
+    this.__lifecycle(options.beforeCreate);
+
+    // 初始化对象
+    this.__init(options);
+
+    this.__lifecycle('created');
+
+    // 如果没有设置挂载点
+    // 表示该组件不挂载
+    // 不挂载的话，render或template也不会去解析
+    // 或许可以在一定阶段以后，在主动去挂载，这样有益于提高效率
+    if (isElement(this.el)) {
+        this.__lifecycle('beforeMount');
+
+        // 挂载组件到页面
+        this.__mount(this.el);
+
+        this.__lifecycle('mounted');
+    }
 
 }
 

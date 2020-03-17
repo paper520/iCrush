@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../dist/iCrush.babel.js"></script>
+    <title>主体设计 | iCrush单一测试</title>
+</head>
+
+<body>
+
+    <div id='root'></div>
+    <script>
+        new iCrush({
+
+            // 挂载点
+            el: document.getElementById('root'),
+
+            // 数据
+            data() {
+                return {
+                    flag1: "标志1",
+                    flag2: "标志2"
+                };
+            },
+
+            // 生命周期
+            beforeCreate() {
+                console.warn("beforeCreate");
+                console.log(this);
+            },
+            created() {
+                console.warn("created");
+                console.log(this);
+            },
+            beforeMount() {
+                console.warn("beforeMount");
+                console.log(this);
+            },
+            mounted() {
+                console.warn("mounted");
+                console.log(this);
+            },
+            beforeUpdate() {
+                console.warn("beforeUpdate");
+                console.log(this);
+            },
+            updated() {
+                console.warn("updated");
+                console.log(this);
+            },
+            beforeDestroy() {
+                console.warn("beforeDestroy");
+                console.log(this);
+            },
+            destroyed() {
+                console.warn("destroyed");
+                console.log(this);
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>

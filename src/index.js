@@ -10,6 +10,13 @@ import iCrush from './core/instance/index';
 // 挂载全局方法
 initGlobalAPI(iCrush);
 
+// 把组件挂载到页面中去
+iCrush.prototype.__mount = function (el) {
+
+  // todo
+  
+};
+
 // 根据运行环境，导出接口
 if (typeof module === "object" && typeof module.exports === "object") {
   module.exports = iCrush;
