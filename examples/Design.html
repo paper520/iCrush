@@ -13,11 +13,20 @@
 
     <div id='root'></div>
     <script>
+        function printInfo(that) {
+            console.log("isDestroyed:" + that.__isDestroyed);
+            console.log("isMounted:" + that.__isMounted);
+            console.log(JSON.parse(JSON.stringify(that._data || {})));
+
+            // 打印当前对象
+            console.log(that);
+        }
+
         new iCrush({
 
             // 挂载点
-            el: document.getElementById('root'),
-            // el:"#root",
+            // el: document.getElementById('root'),
+            el: "#root",
             // 数据
             data() {
                 return {
@@ -33,31 +42,31 @@
             },
             created() {
                 console.warn("created");
-                console.log(this);
+                printInfo(this);
             },
             beforeMount() {
                 console.warn("beforeMount");
-                console.log(this);
+                printInfo(this);
             },
             mounted() {
                 console.warn("mounted");
-                console.log(this);
+                printInfo(this);
             },
             beforeUpdate() {
                 console.warn("beforeUpdate");
-                console.log(this);
+                printInfo(this);
             },
             updated() {
                 console.warn("updated");
-                console.log(this);
+                printInfo(this);
             },
             beforeDestroy() {
                 console.warn("beforeDestroy");
-                console.log(this);
+                printInfo(this);
             },
             destroyed() {
                 console.warn("destroyed");
-                console.log(this);
+                printInfo(this);
             }
 
         });

@@ -60,6 +60,21 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     return type === '[object Function]' || type === '[object AsyncFunction]' || type === '[object GeneratorFunction]' || type === '[object Proxy]';
   }
   /**
+   * 判断一个值是不是String。
+   *
+   * @since V0.1.2
+   * @public
+   * @param {*} value 需要判断类型的值
+   * @returns {boolean} 如果是String返回true，否则返回false
+   */
+
+
+  function isString(value) {
+    var type = _typeof(value);
+
+    return type === 'string' || type === 'object' && value != null && !Array.isArray(value) && getType(value) === '[object String]';
+  }
+  /**
    * 比如：检查参数是否合法，标记组件，部分数据需要预处理等基本操作
    * =========================================
    * 组件初始化
@@ -72,15 +87,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     // 对象初始化
     iCrush.prototype.$$init = function () {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      this.$options = options; // 唯一标志
+      this._options = options; // 唯一标志
 
-      this.__uid = uid++; // 标记是iCrush对象
-
-      this.__isICrush = true; // 需要双向绑定的数据
+      this._uid = uid++; // 需要双向绑定的数据
 
       this._data = isFunction(options.data) ? options.data() : options.data; // 挂载点
 
-      this._el = document.querySelector(options.el);
+      this._el = isString(options.el) ? document.querySelector(options.el) : options.el; // 记录状态
+
+      this.__isMounted = false;
+      this.__isDestroyed = false;
     };
   }
   /**
@@ -104,11 +120,28 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       'created', // 挂载组件
       'beforeMount', 'mounted', // 更新组件
       'beforeUpdate', 'updated', // 销毁组件
-      'beforeDestroy', 'destroyed'].indexOf(callbackName) > -1 && isFunction(this.$options[callbackName])) {
-        this.$options[callbackName].call(this);
+      'beforeDestroy', 'destroyed'].indexOf(callbackName) > -1 && isFunction(this._options[callbackName])) {
+        this._options[callbackName].call(this);
       }
     };
   }
+  /**
+   * createElement方法
+   * =========================================
+   * 组件控制范围内的重要信息收集
+   */
+
+  /**
+   * 创建vnode方法，并收集信息
+   * @param {string} tagName 结点名称
+   * @param {json} attrs 属性
+   * @param {array[vnode|string]} children 孩子元素 
+   * @return {element} 返回vnode
+   */
+
+
+  function createElement(tagName, attrs, children) {} // todo
+
   /**
    * 判断一个值是不是一个朴素的'对象'
    *
@@ -151,6 +184,125 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   }
   /**
    * =========================================
+   * 本文件用于提供一些零碎的方法
+   */
+
+  /**
+   * 获取结点的outHTML
+   * @param {node} el 结点
+   * @return {string} 字符串模板
+   */
+
+
+  function outHTML(el) {
+    if (el.outerHTML) {
+      return el.outerHTML;
+    } else {
+      var container = document.createElement('div');
+      container.appendChild(el.cloneNode(true));
+      return container.innerHTML;
+    }
+  }
+  /**
+   * 把字符串模板变成结点
+   * @param {node|string} template 结点或字符串模板
+   * @return {node} 结点
+   */
+
+
+  function toNode(template) {
+    if (isElement(template)) {
+      return template;
+    } // 如果是字符串模板
+
+
+    var container = document.createElement('div');
+    container.innerHTML = template;
+    return container.firstElementChild;
+  }
+  /**
+   * 判断一个值是不是文本结点。
+   *
+   * @since V0.1.2
+   * @public
+   * @param {*} value 需要判断类型的值
+   * @returns {boolean} 如果是结点元素返回true，否则返回false
+   */
+
+
+  function isText(value) {
+    return value !== null && _typeof(value) === 'object' && value.nodeType === 3 && !isPlainObject(value);
+  }
+
+  function renderMixin(iCrush) {
+    // 根据render生成dom挂载到挂载点
+    // 并调用watcher启动数据监听
+    // 并调用events方法开启@事件注册
+    // 并记录其中的组件，指令和{{}}等
+    iCrush.prototype.$$mountComponent = function () {
+      this.$$lifecycle('beforeMount');
+      /**
+       * 挂载的意义就是由当前组件来管理和调度一片区域
+       */
+      // 获取虚拟结点
+
+      this._vnode = this.$$render(createElement); // 标记已经挂载
+
+      this.__isMounted = true;
+      this.$$lifecycle('mounted');
+    }; // 第一次或数据改变的时候，更新页面
+
+
+    iCrush.prototype.$$updateComponent = function () {
+      this.$$lifecycle('beforeUpdate');
+      this.$$lifecycle('updated');
+    }; // 销毁组件，释放资源
+
+
+    iCrush.prototype.$$destroyComponent = function () {
+      this.$$lifecycle('beforeDestroy');
+      this.$$lifecycle('destroyed');
+    };
+  }
+  /**
+   * 根据字符串模板生成render函数
+   * @param {string} template 字符串模板
+   * @return {function} render函数
+   */
+
+
+  function createRenderFactroy(template) {
+    var doit = function doit(node, createElement) {
+      var childNodes = node.childNodes,
+          childRenders = [];
+
+      for (var i = 0; i < childNodes.length; i++) {
+        // 如果是文本结点
+        if (isText(childNodes[i])) {
+          childRenders.push(childNodes[i].textContent);
+        } // 如果是标签结点
+        else if (isElement(childNodes[i])) {
+            childRenders.push(doit(childNodes[i], createElement));
+          }
+      } // 记录属性
+
+
+      var attrs = {};
+
+      for (var _i = 0; _i < node.attributes.length; _i++) {
+        attrs[node.attributes[_i].nodeName] = node.attributes[_i].nodeValue;
+      } // 返回生成的元素
+
+
+      return createElement(node.tagName, attrs, childRenders);
+    };
+
+    return function (createElement) {
+      return doit(toNode(template), createElement);
+    };
+  }
+  /**
+   * =========================================
    * iCrush对象
    */
 
@@ -166,13 +318,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     this.$$lifecycle('created'); // 如果没有设置挂载点
     // 表示该组件不挂载
     // 不挂载的话，render或template也不会去解析
-    // 或许可以在一定阶段以后，在主动去挂载，这样有益于提高效率
+    // 或许可以在一定阶段以后，再主动去挂载，这样有益于提高效率
 
-    if (isElement(this.el)) {
-      this.$$lifecycle('beforeMount'); // 挂载组件到页面
-
-      this.$$mount(this.el);
-      this.$$lifecycle('mounted');
+    if (isElement(this._el)) {
+      // 挂载组件到页面
+      this.$$mount();
     }
   }
   /**
@@ -184,6 +334,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
   lifecycleMixin(iCrush); // 和组件的生命周期相关调用
 
+  renderMixin(iCrush); // 组件渲染或更新相关
+
   /**
    * 备注：
    * $$开头的表示内部方法，__开头的表示内部资源
@@ -193,7 +345,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
    */
   // 把组件挂载到页面中去
 
-  iCrush.prototype.$$mount = function (el) {// todo
+  iCrush.prototype.$$mount = function () {
+    if (!isFunction(this._options.render)) {
+      var template = this.template; // 如果template没有设置或设置的不是字符串
+
+      if (!template || !isString(template)) {
+        // 直接选择el
+        template = outHTML(this._el);
+      } // 根据template生成render函数
+
+
+      this.$$render = createRenderFactroy(template);
+    } else {
+      this.$$render = this._options.render;
+    } // 准备好以后挂载
+
+
+    this.$$mountComponent();
   }; // 根据运行环境，导出接口
 
 

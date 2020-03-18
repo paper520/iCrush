@@ -15,14 +15,14 @@ initGlobalAPI(iCrush);
 import isString from '@yelloxing/core.js/isString';
 import isFunction from '@yelloxing/core.js/isFunction';
 
-import { outHTML } from './tools';
+import { outHTML } from './helper';
 
 import { createRenderFactroy } from './core/instance/render';
 
 // 把组件挂载到页面中去
-iCrush.prototype.$$mount = function (el) {
+iCrush.prototype.$$mount = function () {
 
-  if (!isFunction(this.$options.render)) {
+  if (!isFunction(this._options.render)) {
 
     let template = this.template;
 
@@ -30,21 +30,18 @@ iCrush.prototype.$$mount = function (el) {
     if (!template || !isString(template)) {
 
       // 直接选择el
-      template = outHTML(el);
+      template = outHTML(this._el);
     }
 
     // 根据template生成render函数
     this.$$render = createRenderFactroy(template);
 
   } else {
-    this.$$render = this.$options.render;
+    this.$$render = this._options.render;
   }
 
-  // todo
   // 准备好以后挂载
-
-  // 标记已经挂载
-  this.__isMounted = true;
+  this.$$mountComponent();
 
 };
 

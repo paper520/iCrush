@@ -24,14 +24,12 @@ function iCrush(options) {
     // 如果没有设置挂载点
     // 表示该组件不挂载
     // 不挂载的话，render或template也不会去解析
-    // 或许可以在一定阶段以后，在主动去挂载，这样有益于提高效率
-    if (isElement(this.el)) {
-        this.$$lifecycle('beforeMount');
+    // 或许可以在一定阶段以后，再主动去挂载，这样有益于提高效率
+    if (isElement(this._el)) {
 
         // 挂载组件到页面
-        this.$$mount(this.el);
+        this.$$mount();
 
-        this.$$lifecycle('mounted');
     }
 
 }

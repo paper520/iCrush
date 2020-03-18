@@ -5,7 +5,7 @@
 
 import get from '@yelloxing/core.js/get';
 
-export default function (iCrush_object) {
+export default function (that) {
 
     // todo
 

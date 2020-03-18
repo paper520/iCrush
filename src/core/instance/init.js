@@ -14,13 +14,10 @@ export function initMixin(iCrush) {
     // 对象初始化
     iCrush.prototype.$$init = function (options = {}) {
 
-        this.$options = options;
+        this._options = options;
 
         // 唯一标志
-        this.__uid = uid++;
-
-        // 标记是iCrush对象
-        this.__isICrush = true;
+        this._uid = uid++;
 
         // 需要双向绑定的数据
         this._data = isFunction(options.data) ? options.data() : options.data;

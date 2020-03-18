@@ -32,8 +32,8 @@ export function lifecycleMixin(iCrush) {
             // 销毁组件
             'beforeDestroy', 'destroyed'
 
-        ].indexOf(callbackName) > -1 && isFunction(this.$options[callbackName])) {
-            this.$options[callbackName].call(this);
+        ].indexOf(callbackName) > -1 && isFunction(this._options[callbackName])) {
+            this._options[callbackName].call(this);
         }
 
     };
