@@ -3,7 +3,6 @@
  * 通过proxy的方式，对this.data中的数据进行拦截
  */
 
-import get from '@yelloxing/core.js/get';
 import isFunction from '@yelloxing/core.js/isFunction';
 
 import { isValidKey } from '../../helper';
@@ -19,7 +18,7 @@ export default function (that) {
             console.error('[iCrush warn]: Data property "' + key + '" has already been defined as a Method.');
         }
 
-        let value = get(that._data, key);
+        let value = that._data[key];
 
         that[key] = value;
 
