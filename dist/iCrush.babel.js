@@ -143,6 +143,142 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   function createElement(tagName, attrs, children) {} // todo
 
   /**
+   * 判断一个值是不是symbol。
+   *
+   * @since V0.1.2
+   * @public
+   * @param {*} value 需要判断类型的值
+   * @returns {boolean} 如果是symbol返回true，否则返回false
+   */
+
+
+  function isSymbol(value) {
+    var type = _typeof(value);
+
+    return type === 'symbol' || type === 'object' && value !== null && getType(value) === '[object Symbol]';
+  }
+  /**
+   * 判断是不是一个对象上的属性
+   *
+   * @private
+   * @param {Array|string} path 属性或路径
+   * @param {Object} object 操作的对象
+   * @returns {boolean} 如果是返回true，否则返回false
+   */
+
+
+  function isKey(value, object) {
+    if (Array.isArray(value)) {
+      return false;
+    }
+
+    var type = _typeof(value);
+
+    if (type == 'number' || type == 'boolean' || value == null || isSymbol(value)) {
+      return true;
+    }
+
+    return object !== null && value in Object(object) || /^\w*$/.test(value);
+  }
+  /**
+   * 把字符串路径变成简单的数组
+   *
+   * @private
+   * @param {string} value 需要解析的路径字符串
+   * @returns {Array} 返回属性数组
+   */
+
+
+  function stringToPath(value) {
+    return value.replace(/\[/g, ".").replace(/\]/g, '').replace(/"/g, "").replace(/'/g, "").split('.');
+  }
+  /**
+   * 把属性字符串统一变成数组（数组每个值是一个简单的属性）
+   *
+   * @private
+   * @param {Array|string} path 属性或路径
+   * @param {Object} object 操作的对象
+   * @returns {Array} 返回属性数组
+   */
+
+
+  function castPath(value, object) {
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    return isKey(value, object) ? [value] : stringToPath(value);
+  }
+
+  var INFINITY = 1 / 0;
+  /**
+   * 如果value不是字符串或者symbol，就变成字符串
+   *
+   * @private
+   * @param {*} value 需要检查的值
+   * @returns {string|symbol} 返回key
+   */
+
+  function toKey(value) {
+    if (typeof value === 'string' || isSymbol(value)) {
+      return value;
+    }
+
+    var result = "".concat(value);
+    return result === '0' && 1 / value === -INFINITY ? "-0" : result;
+  }
+  /**
+   * 获取一个对象属性值的基础方法，没有默认值。
+   *
+   * @private
+   * @param {Object} object 操作的对象
+   * @param {Array|string} path 属性或路径
+   * @returns {*} 返回设置的结果
+   */
+
+
+  function baseGet(object, path) {
+    // 统一把路径变成['a','b','c',...]这种
+    path = castPath(path, object);
+    var index = 0;
+
+    for (; index < path.length && object !== null; index++) {
+      object = object[toKey(path[index])];
+    }
+
+    return index && index === path.length ? object : undefined;
+  }
+  /**
+   * 获取object的属性path的值。如果返回的值是undefined，
+   * defaultValue就作为返回值返回。
+   *
+   * @since V0.1.0
+   * @public
+   * @param {Object} object 查询的对象
+   * @param {Array|string} path 对象上查询值的路径
+   * @param {*} defaultValue 值为undefined的时候的返回值
+   * @returns {*} 返回结果
+   * @example
+   *
+   * var object={a:{b:[1,2,3]}};
+   *
+   * get(object,'a.b') or
+   * get(object,['a','b'])
+   * // [1,2,3]
+   *
+   * get(object,'a["b"][1]')
+   * // 2
+   *
+   * get(object,'a.c','default')
+   * // 'default'
+   */
+
+
+  function get(object, path, defaultValue) {
+    var result = object == null ? undefined : baseGet(object, path);
+    return result === undefined ? defaultValue : result;
+  }
+  /**
    * 判断一个值是不是一个朴素的'对象'
    *
    * @private
@@ -221,6 +357,49 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     return container.firstElementChild;
   }
   /**
+   * 判断是否是合法的方法或数据key
+   * @param {string} key 
+   */
+
+
+  function isValidKey(key) {
+    // 判断是不是_或者$开头的
+    // 这两个内部预留了
+    if (/^[_$]/.test(key)) {
+      throw new Error('The beginning of _ or $ is not allowed：' + key);
+    }
+  }
+  /**
+   * =========================================
+   * 通过proxy的方式，对this.data中的数据进行拦截
+   */
+
+
+  function watcher(that) {
+    var _loop = function _loop(key) {
+      // 由于key的特殊性，注册前需要进行校验
+      isValidKey(key);
+      var value = get(that._data, key); // 针对data进行拦截，后续对data的数据添加不会自动监听了
+      // this._data的数据是初始化以后的，后续保持不变，方便组件被重新使用（可能的设计，当前预留一些余地）
+      // 当前对象数据会和方法一样直接挂载在根节点
+
+      Object.defineProperty(that, key, {
+        get: function get() {
+          return value;
+        },
+        set: function set(newValue) {
+          value = newValue; // 数据改变，触发更新
+
+          that.$$updateComponent();
+        }
+      });
+    };
+
+    for (var key in that._data) {
+      _loop(key);
+    }
+  }
+  /**
    * 判断一个值是不是文本结点。
    *
    * @since V0.1.2
@@ -246,7 +425,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
        */
       // 获取虚拟结点
 
-      this._vnode = this.$$render(createElement); // 标记已经挂载
+      this._vnode = this.$$render(createElement); //  挂载好了以后，启动监听
+
+      watcher(this); // 标记已经挂载
 
       this.__isMounted = true;
       this.$$lifecycle('mounted');
