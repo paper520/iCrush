@@ -14,6 +14,9 @@
  */
 export default function (tagName, attrs, children) {
 
-    // todo
+    // 设计中
+    return {
+        tagName, attrs, children
+    };
 
 };

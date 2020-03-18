@@ -32,7 +32,7 @@ export function toNode(template) {
 
     // 如果是字符串模板
     const container = document.createElement('div');
-    container.innerHTML = template;
+    container.innerHTML = template.replace(/[\n\f\r]/g, '').trim();
     return container.firstElementChild;
 };
 
@@ -44,6 +44,6 @@ export function isValidKey(key) {
     // 判断是不是_或者$开头的
     // 这两个内部预留了
     if (/^[_$]/.test(key)) {
-        throw new Error('The beginning of _ or $ is not allowed：' + key);
+        console.error('[iCrush warn]: The beginning of _ or $ is not allowed：' + key);
     }
 };

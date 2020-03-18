@@ -59,7 +59,12 @@ export function createRenderFactroy(template) {
 
             // 如果是文本结点
             if (isText(childNodes[i])) {
-                childRenders.push(childNodes[i].textContent);
+
+                // 对于空格，tab等空白文字结点，我们认为可以直接剔除
+                if (!/^[\x20\t]+$/.test(childNodes[i].textContent)) {
+                    childRenders.push(childNodes[i].textContent);
+                }
+
             }
 
             // 如果是标签结点

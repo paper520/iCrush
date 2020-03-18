@@ -11,7 +11,12 @@
 
 <body>
 
-    <div id='root'></div>
+    <div id='root'>
+        <ul>
+            <li>flag1:{{flag1}}</li>
+            <li>flag2:{{flag2}}</li>
+        </ul>
+    </div>
     <script>
         function printInfo(that) {
             console.log("isDestroyed:" + that.__isDestroyed);
@@ -33,6 +38,16 @@
                     flag1: "标志1",
                     flag2: "标志2"
                 };
+            },
+
+            // 方法
+            methods: {
+                doit1() {
+                    alert(this.flag2);
+                },
+                doit2() {
+                    alert(this.flag2);
+                }
             },
 
             // 生命周期

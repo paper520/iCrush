@@ -11,7 +11,7 @@ import isElement from '@yelloxing/core.js/isElement';
 
 function iCrush(options) {
     if (!(this instanceof iCrush)) {
-        throw new Error('iCrush is a constructor and should be called with the `new` keyword');
+        console.error('[iCrush warn]: iCrush is a constructor and should be called with the `new` keyword');
     }
 
     this.$$lifecycle(options.beforeCreate);

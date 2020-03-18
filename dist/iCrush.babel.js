@@ -9,6 +9,21 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 */
 (function () {
   'use strict';
+  /**
+   * =========================================
+   * 挂载全局方法
+   */
+
+  function initGlobalAPI(iCrush) {
+    // 挂载指令
+    iCrush.directive = function (name, options) {}; // 挂载组件
+
+
+    iCrush.component = function (name, options) {}; // 挂载过滤器
+
+
+    iCrush.filter = function (name, options) {};
+  }
 
   var toString = Object.prototype.toString;
   /**
@@ -75,6 +90,97 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     return type === 'string' || type === 'object' && value != null && !Array.isArray(value) && getType(value) === '[object String]';
   }
   /**
+   * 判断一个值是不是一个朴素的'对象'
+   *
+   * @private
+   * @param {*} value 需要判断类型的值
+   * @returns {boolean} 如果是朴素的'对象'返回true，否则返回false
+   */
+
+
+  function isPlainObject(value) {
+    if (value === null || _typeof(value) !== 'object' || getType(value) != '[object Object]') {
+      return false;
+    } // 如果原型为null
+
+
+    if (Object.getPrototypeOf(value) === null) {
+      return true;
+    }
+
+    var proto = value;
+
+    while (Object.getPrototypeOf(proto) !== null) {
+      proto = Object.getPrototypeOf(proto);
+    }
+
+    return Object.getPrototypeOf(value) === proto;
+  }
+  /**
+   * 判断一个值是不是结点元素。
+   *
+   * @since V0.1.2
+   * @public
+   * @param {*} value 需要判断类型的值
+   * @returns {boolean} 如果是结点元素返回true，否则返回false
+   */
+
+
+  function isElement(value) {
+    return value !== null && _typeof(value) === 'object' && (value.nodeType === 1 || value.nodeType === 9 || value.nodeType === 11) && !isPlainObject(value);
+  }
+  /**
+   * =========================================
+   * 本文件用于提供一些零碎的方法
+   */
+
+  /**
+   * 获取结点的outHTML
+   * @param {node} el 结点
+   * @return {string} 字符串模板
+   */
+
+
+  function outHTML(el) {
+    if (el.outerHTML) {
+      return el.outerHTML;
+    } else {
+      var container = document.createElement('div');
+      container.appendChild(el.cloneNode(true));
+      return container.innerHTML;
+    }
+  }
+  /**
+   * 把字符串模板变成结点
+   * @param {node|string} template 结点或字符串模板
+   * @return {node} 结点
+   */
+
+
+  function toNode(template) {
+    if (isElement(template)) {
+      return template;
+    } // 如果是字符串模板
+
+
+    var container = document.createElement('div');
+    container.innerHTML = template.replace(/[\n\f\r]/g, '').trim();
+    return container.firstElementChild;
+  }
+  /**
+   * 判断是否是合法的方法或数据key
+   * @param {string} key 
+   */
+
+
+  function isValidKey(key) {
+    // 判断是不是_或者$开头的
+    // 这两个内部预留了
+    if (/^[_$]/.test(key)) {
+      console.error('[iCrush warn]: The beginning of _ or $ is not allowed：' + key);
+    }
+  }
+  /**
    * 比如：检查参数是否合法，标记组件，部分数据需要预处理等基本操作
    * =========================================
    * 组件初始化
@@ -96,7 +202,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       this._el = isString(options.el) ? document.querySelector(options.el) : options.el; // 记录状态
 
       this.__isMounted = false;
-      this.__isDestroyed = false;
+      this.__isDestroyed = false; // 挂载方法
+
+      for (var key in options.methods) {
+        // 由于key的特殊性，注册前需要进行校验
+        isValidKey(key);
+        this[key] = options.methods[key];
+      }
     };
   }
   /**
@@ -140,8 +252,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
    */
 
 
-  function createElement(tagName, attrs, children) {} // todo
-
+  function createElement(tagName, attrs, children) {
+    // 设计中
+    return {
+      tagName: tagName,
+      attrs: attrs,
+      children: children
+    };
+  }
   /**
    * 判断一个值是不是symbol。
    *
@@ -279,97 +397,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     return result === undefined ? defaultValue : result;
   }
   /**
-   * 判断一个值是不是一个朴素的'对象'
-   *
-   * @private
-   * @param {*} value 需要判断类型的值
-   * @returns {boolean} 如果是朴素的'对象'返回true，否则返回false
-   */
-
-
-  function isPlainObject(value) {
-    if (value === null || _typeof(value) !== 'object' || getType(value) != '[object Object]') {
-      return false;
-    } // 如果原型为null
-
-
-    if (Object.getPrototypeOf(value) === null) {
-      return true;
-    }
-
-    var proto = value;
-
-    while (Object.getPrototypeOf(proto) !== null) {
-      proto = Object.getPrototypeOf(proto);
-    }
-
-    return Object.getPrototypeOf(value) === proto;
-  }
-  /**
-   * 判断一个值是不是结点元素。
-   *
-   * @since V0.1.2
-   * @public
-   * @param {*} value 需要判断类型的值
-   * @returns {boolean} 如果是结点元素返回true，否则返回false
-   */
-
-
-  function isElement(value) {
-    return value !== null && _typeof(value) === 'object' && (value.nodeType === 1 || value.nodeType === 9 || value.nodeType === 11) && !isPlainObject(value);
-  }
-  /**
-   * =========================================
-   * 本文件用于提供一些零碎的方法
-   */
-
-  /**
-   * 获取结点的outHTML
-   * @param {node} el 结点
-   * @return {string} 字符串模板
-   */
-
-
-  function outHTML(el) {
-    if (el.outerHTML) {
-      return el.outerHTML;
-    } else {
-      var container = document.createElement('div');
-      container.appendChild(el.cloneNode(true));
-      return container.innerHTML;
-    }
-  }
-  /**
-   * 把字符串模板变成结点
-   * @param {node|string} template 结点或字符串模板
-   * @return {node} 结点
-   */
-
-
-  function toNode(template) {
-    if (isElement(template)) {
-      return template;
-    } // 如果是字符串模板
-
-
-    var container = document.createElement('div');
-    container.innerHTML = template;
-    return container.firstElementChild;
-  }
-  /**
-   * 判断是否是合法的方法或数据key
-   * @param {string} key 
-   */
-
-
-  function isValidKey(key) {
-    // 判断是不是_或者$开头的
-    // 这两个内部预留了
-    if (/^[_$]/.test(key)) {
-      throw new Error('The beginning of _ or $ is not allowed：' + key);
-    }
-  }
-  /**
    * =========================================
    * 通过proxy的方式，对this.data中的数据进行拦截
    */
@@ -379,7 +406,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     var _loop = function _loop(key) {
       // 由于key的特殊性，注册前需要进行校验
       isValidKey(key);
-      var value = get(that._data, key); // 针对data进行拦截，后续对data的数据添加不会自动监听了
+
+      if (isFunction(that[key])) {
+        console.error('[iCrush warn]: Data property "' + key + '" has already been defined as a Method.');
+      }
+
+      var value = get(that._data, key);
+      that[key] = value; // 针对data进行拦截，后续对data的数据添加不会自动监听了
       // this._data的数据是初始化以后的，后续保持不变，方便组件被重新使用（可能的设计，当前预留一些余地）
       // 当前对象数据会和方法一样直接挂载在根节点
 
@@ -460,7 +493,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       for (var i = 0; i < childNodes.length; i++) {
         // 如果是文本结点
         if (isText(childNodes[i])) {
-          childRenders.push(childNodes[i].textContent);
+          // 对于空格，tab等空白文字结点，我们认为可以直接剔除
+          if (!/^[\x20\t]+$/.test(childNodes[i].textContent)) {
+            childRenders.push(childNodes[i].textContent);
+          }
         } // 如果是标签结点
         else if (isElement(childNodes[i])) {
             childRenders.push(doit(childNodes[i], createElement));
@@ -490,7 +526,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
   function iCrush(options) {
     if (!(this instanceof iCrush)) {
-      throw new Error('iCrush is a constructor and should be called with the `new` keyword');
+      console.error('[iCrush warn]: iCrush is a constructor and should be called with the `new` keyword');
     }
 
     this.$$lifecycle(options.beforeCreate); // 初始化对象
@@ -524,7 +560,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
    * =========================================
    * 整合全部资源，对外暴露调用接口
    */
-  // 把组件挂载到页面中去
+  // 挂载全局方法
+
+  initGlobalAPI(iCrush); // 把组件挂载到页面中去
 
   iCrush.prototype.$$mount = function () {
     if (!isFunction(this._options.render)) {

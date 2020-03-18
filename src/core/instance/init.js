@@ -7,6 +7,8 @@
 import isFunction from '@yelloxing/core.js/isFunction';
 import isString from '@yelloxing/core.js/isString';
 
+import { isValidKey } from '../../helper';
+
 let uid = 1;
 
 export function initMixin(iCrush) {
@@ -27,6 +29,15 @@ export function initMixin(iCrush) {
 
         // 记录状态
         this.__isMounted = false; this.__isDestroyed = false;
+
+        // 挂载方法
+        for (let key in options.methods) {
+
+            // 由于key的特殊性，注册前需要进行校验
+            isValidKey(key);
+
+            this[key] = options.methods[key];
+        }
 
     };
 
