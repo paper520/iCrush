@@ -8,8 +8,6 @@ module.exports = function (template) {
     // 回退一个
     let goBack = () => i--;
 
-    // 定义几种状态
-
     // 获取下一个半标签、自闭合标签或普通文本
     // 返回一个字符串，如果已经没有了，返回null
     return function () {
@@ -37,7 +35,20 @@ module.exports = function (template) {
             goBack();
         }
 
-        return tagTemplate;
+        return {
+            template: tagTemplate,
+            type: isTag ? "tag" : "text",
+
+            // 如果是tag准备再划分三类：begin,end,full
+            flag: (() => {
+
+                if (/<\//.test(tagTemplate)) return 'end';
+                if (/\/>/.test(tagTemplate)) return 'end';
+                return isTag ? 'begin' : null;
+
+            })()
+
+        };
     };
 
 };

@@ -3,7 +3,7 @@ function split(template) {
     let nextTag = require('./nextTag')(template.replace(/[\n\f\r]/g, ' ').trim()), tag = nextTag();
 
     while (tag !== null) {
-        console.log("##" + tag + "##");
+        console.log("##" + JSON.stringify(tag) + "##");
         tag = nextTag();
     }
 
