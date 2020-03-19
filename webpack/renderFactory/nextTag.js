@@ -42,12 +42,11 @@ module.exports = function (template) {
             // 如果是tag准备再划分三类：begin,end,full
             flag: (() => {
 
+                if (isTag) return null;
                 if (/<\//.test(tagTemplate)) return 'end';
                 if (/\/>/.test(tagTemplate)) return 'end';
-                return isTag ? 'begin' : null;
-
+                return 'begin';
             })()
-
         };
     };
 
