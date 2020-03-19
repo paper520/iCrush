@@ -4,6 +4,9 @@ import iCrush from 'iCrush';
 import '@yelloxing/normalize.css';
 import './styles/root.css';
 
+// 引入请求方法
+import remote from './service/$remote'; iCrush.use(remote);
+
 // 引入主页面
 import App from './App.iCrush';
 
@@ -14,6 +17,10 @@ window.icrush = new iCrush({
   el: document.getElementById('root'),
 
   // 配置启动方法
-  render: createElement => createElement(App)
+  render: createElement => createElement(App),
+
+  created() {
+    console.warn(this);
+  }
 
 });

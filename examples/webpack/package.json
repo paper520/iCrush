@@ -4,7 +4,7 @@
   "description": "📚 一个简单的iCrush使用测试或例子",
   "scripts": {
     "start": "npm install && npm run dev",
-    "dev": "node_modules/.bin/webpack-dev-server --open --config webpack.dev.js",
+    "dev": "node_modules/.bin/webpack-dev-server --config webpack.dev.js",
     "build": "node_modules/.bin/webpack --config webpack.prod.js"
   },
   "keywords": [

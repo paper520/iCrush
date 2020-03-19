@@ -9,12 +9,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 */
 (function () {
   'use strict';
-  /**
-   * =========================================
-   * 挂载全局方法
-   */
 
-  function initGlobalAPI(iCrush) {
+  function mount(iCrush) {
     // 挂载指令
     iCrush.directive = function (name, options) {}; // 挂载组件
 
@@ -23,6 +19,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
     iCrush.filter = function (name, options) {};
+  }
+
+  function use(iCrush) {
+    // 补充原型方法
+    iCrush.use = function (extend) {
+      extend.install.call(extend, iCrush);
+    };
+  }
+  /**
+   * =========================================
+   * 挂载全局方法
+   */
+
+
+  function initGlobalAPI(iCrush) {
+    mount(iCrush);
+    use(iCrush);
   }
 
   var toString = Object.prototype.toString;
@@ -253,6 +266,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
   function createElement(tagName, attrs, children) {
+    // 如果是json，那就需要创建新的iCrush对象了
     console.log(tagName, attrs, children); // 设计中
 
     return {
