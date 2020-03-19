@@ -1,21 +1,19 @@
-
-
-
 function split(template) {
 
-    console.log(template);
+    let nextTag = require('./nextTag')(template.replace(/[\n\f\r]/g, ' ').trim()), tag = nextTag();
 
-     let nodeArray=[];
+    while (tag !== null) {
+        console.log("##" + tag + "##");
+        tag = nextTag();
+    }
 
-
-
-     return nodeArray;
 };
 
 // renderFactory
-module.exports = function (template) {
+// 输入的tags是经过split处理后得到的更友好的格式
+module.exports = function (tags) {
 
-   
+
 
 };
 
