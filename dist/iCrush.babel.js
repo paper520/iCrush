@@ -253,7 +253,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
   function createElement(tagName, attrs, children) {
-    // 设计中
+    console.log(tagName, attrs, children); // 设计中
+
     return {
       tagName: tagName,
       attrs: attrs,

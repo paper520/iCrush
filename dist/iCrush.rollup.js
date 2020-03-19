@@ -270,6 +270,8 @@
      */
     function createElement (tagName, attrs, children) {
 
+        console.log(tagName, attrs, children);
+
         // 设计中
         return {
             tagName, attrs, children

@@ -1,5 +1,17 @@
 <template>
-    <div>
-        例子
-    </div>
+  <div>例子</div>
 </template>
+
+<script>
+export default {
+  data() {
+    return {};
+  }
+};
+</script>
+
+<style scoped>
+div {
+  color: red;
+}
+</style>

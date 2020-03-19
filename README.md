@@ -1,4 +1,5 @@
 # iCrush 📚 一个渐进型的前端小框架
+(用于前端框架源码等相关技术学习)
 
 > v1版本研发中，敬请期待，也欢迎你的加入，你可以[点击此处](https://github.com/yelloxing/iCrush/tree/version-0.1)查看v0.1版本！
 
