@@ -8,6 +8,8 @@ function split(template) {
         script: ""
     };
 
+    // 分别用于标记模板和脚本是否获取完毕和已经开始获取
+    // 这样标记的目的是在遇到一个tag的时候可以根据当前的状态采取行动
     let hadSaveTemplate = false, beginSaveTemplate = false;
     let hadSaveScript = false, beginSaveScript = false;
 
@@ -56,8 +58,11 @@ const analyTag = require('./analyTag');
 
 let getRenderFactory = function (deepArrayItem) {
 
+    // 因为文本不存在孩子和属性
+    // 自己作为字符串成为孩子即可
     if (deepArrayItem.type == 'text') return "createElement(\"" + deepArrayItem.tag + "\")";
 
+    // 对于结点，分析出tagName和属性
     let analyResult = analyTag(deepArrayItem.tag), children = "[";
 
     // 递归获取孩子

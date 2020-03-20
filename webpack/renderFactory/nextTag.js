@@ -29,9 +29,13 @@ module.exports = function (template) {
             charStr = next();
         }
 
+        // 如果是获取标签，拼接最后的>
         if (isTag) {
             tagTemplate += ">";
-        } else if (charStr == '<') {
+        }
+
+        // 如果是拼接文本，因为需要后瞻一个字符，完成后需要回滚
+        else if (charStr == '<') {
             goBack();
         }
 
