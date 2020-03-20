@@ -35,19 +35,21 @@ module.exports = function (template) {
             goBack();
         }
 
-        return {
+        let result = {
             template: tagTemplate,
             type: isTag ? "tag" : "text",
 
             // 如果是tag准备再划分三类：begin,end,full
             flag: (() => {
 
-                if (isTag) return null;
+                if (!isTag) return null;
                 if (/<\//.test(tagTemplate)) return 'end';
-                if (/\/>/.test(tagTemplate)) return 'end';
+                if (/\/>/.test(tagTemplate)) return 'full';
                 return 'begin';
             })()
         };
+
+        return result;
     };
 
 };

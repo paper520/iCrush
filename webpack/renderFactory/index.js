@@ -52,13 +52,18 @@ function split(template) {
     return tags;
 };
 
-const analyTag = require('./analyTag');
-
 // renderFactory
 // 输入的tagsTemplate是经过split处理后得到的更友好的格式
 module.exports = function (tagsTemplate) {
 
-    return '/*=>' + JSON.stringify(tagsTemplate) + '<=*/';
+    console.log('==========================================');
+
+    let deepArray = require('./toDeepArray')(tagsTemplate);
+
+    console.log(deepArray);
+    console.log('==========================================');
+
+    return "";
 
 };
 
