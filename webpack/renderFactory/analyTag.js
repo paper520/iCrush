@@ -13,12 +13,17 @@
  */
 module.exports = function (template) {
 
+    attrsArray = template.replace(/^</, '').replace(/[/]{0,1}>$/, '').trim().split(/ +/);
+
+    let attrs = {};
+    for (let i = 1; i < attrsArray.length; i++) {
+        let attr = attrsArray[i].split('=');
+        attrs[attr[0]] = attr[1];
+    }
+
     return {
-        tagName: "div",
-        attrs: {
-           "aa":"1",
-           "bb":"2"
-        }
+        tagName: attrsArray[0],
+        attrs
     };
 
 };
