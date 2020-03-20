@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label for="">测试</label>
+    <label for=''>测试</label>
     <input class='itc' id='itd' />
     文本
     <ul>

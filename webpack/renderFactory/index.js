@@ -52,18 +52,31 @@ function split(template) {
     return tags;
 };
 
+const analyTag = require('./analyTag');
+
+let getRenderFactory = function (deepArrayItem) {
+
+    if (deepArrayItem.type == 'text') return "createElement(\"" + deepArrayItem.tag + "\")";
+
+    let analyResult = analyTag(deepArrayItem.tag), children = "[";
+
+    // 递归获取孩子
+    for (let i = 0; i < deepArrayItem.children.length; i++) {
+        children += getRenderFactory(deepArrayItem.children[i]) + ",";
+    }
+    children.replace(/,$/, "");
+    children += "]";
+
+    return "createElement(\"" + analyResult.tagName + "\"," + JSON.stringify(analyResult.attrs) + "," + children + ")";
+};
+
 // renderFactory
 // 输入的tagsTemplate是经过split处理后得到的更友好的格式
 module.exports = function (tagsTemplate) {
 
-    console.log('==========================================');
-
     let deepArray = require('./toDeepArray')(tagsTemplate);
 
-    console.log(deepArray);
-    console.log('==========================================');
-
-    return "";
+    return getRenderFactory(deepArray);
 
 };
 
