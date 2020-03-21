@@ -5,13 +5,15 @@ function split(template) {
     // 分割出来不同的模板内容
     let tags = {
         template: [],
-        script: ""
+        script: "",
+        style: ""
     };
 
-    // 分别用于标记模板和脚本是否获取完毕和已经开始获取
+    // 分别用于标记模板、脚本和样式是否获取完毕和已经开始获取
     // 这样标记的目的是在遇到一个tag的时候可以根据当前的状态采取行动
     let hadSaveTemplate = false, beginSaveTemplate = false;
     let hadSaveScript = false, beginSaveScript = false;
+    let hadSaveStyle = false, beginSaveStyle = false;
 
     // 模板分组开始
     while (tag !== null) {
@@ -35,6 +37,18 @@ function split(template) {
 
             // JS比较特殊，收集到以后就可以立刻结束
             hadSaveScript = true;
+
+
+        }
+
+        // 如果在收集style
+        else if (beginSaveStyle && !hadSaveStyle) {
+            if (tag.type == 'text') {
+                tags.style = tag.template;
+            }
+
+            // style比较特殊，收集到以后就可以立刻结束
+            hadSaveStyle = true;
         } else if (tag.template == '<template>') {
 
             // 标记可以开始记录模板
@@ -43,10 +57,10 @@ function split(template) {
 
             // 标记可以开始记录js
             beginSaveScript = true;
-        } else {
+        } else if (tag.template == '<style>') {
 
-            // 加速判断
-            break;
+            // 标记可以开始记录样式
+            beginSaveStyle = true;
         }
         tag = nextTag();
     }

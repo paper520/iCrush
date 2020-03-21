@@ -287,9 +287,6 @@
      */
     function createElement (tagName, attrs, children) {
 
-        // 如果是json，那就需要创建新的iCrush对象了
-        console.log(tagName, attrs, children);
-
         // 设计中
         return {
             tagName, attrs, children

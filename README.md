@@ -13,13 +13,8 @@
 因为是学习项目，我们目前不打算给出使用文档（至少当前是如此定位的），不过我们有许多[测试用例](https://github.com/yelloxing/iCrush/tree/master/examples)可供参考，里面会提供各种用法并添加好备注。
 
 ## How to use?
-如果你开发的是一个web项目，直接在页面引入打包后的文件后即可（在代码中通过iCrush调用）：
 
-```html
-<script src="./dist/iCrush.min.js" type="text/javascript"></script>
-```
-
-如果你想通过npm方式管理，首先你需要通过命令行安装iCrush，就像这样：
+首先你需要通过命令行安装iCrush，就像这样：
 
 ```bash
 npm install --save icrush
@@ -31,11 +26,47 @@ npm install --save icrush
 import iCrush from 'icrush';
 ```
 
-或
+iCrush设计的思想是组件，一个完整的页面由一系列并列或包含的组件拼接而成，但是，根组件只有一个：
 
 ```js
-const iCrush = require("icrush");
+// 引入别的组件
+// 在这个组件里面，又可以引入组件，这样一层层拼接
+// 当然，每次并列引入的组件理论上可以任意多
+import App from './App.iCrush';
+
+// 根对象
+window.icrush = new iCrush({
+
+  // 挂载点
+  el: document.getElementById('root'),
+
+  // 配置启动方法
+  render: createElement => createElement(App),
+
+  // 还可以添加方法或生命周期钩子等
+
+});
 ```
+
+你可能会好奇App.iCrush的格式：
+
+```html
+<template>
+  <!-- 页面模板 -->
+</template>
+
+<script>
+  export default {
+    // 类似控制器的地方
+  };
+</script>
+
+<style>
+  /* 开启scope，不能控制子组件样式 */
+</style>
+```
+
+当然，除了.iCrush的方式外，你也可以通过iCrush.component()定义组件或者别的方法添加更多有用的扩展。
 
 ## License
 
