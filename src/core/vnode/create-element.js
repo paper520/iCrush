@@ -67,31 +67,37 @@ export default function (tagName, attrs, children) {
                         content: ("\" " + child + " \"").replace(/\{\{([^}]+)\}\}/g, "\"+this.$1+\"")
                     });
                 } else {
+
+                    // 普通文本和bind文本区别开的目的是加速计算
+                    // 针对普通文本
+                    // 控制器的数据改变不需要去理会这里的内容
                     newChildren.push({
                         type: 'text',
                         content: child
                     });
                 }
             } else {
+
+                // 非字符串，也就是非文本的结点
                 newChildren.push(child);
             }
         }
 
     } else {
         return {
-            // 一共分三类：
+            // 一共分五类：
             // 1.component普通组件
             // 2.tag普通标签
             // 3.dynamicComponent动态组件
             // 4.text普通文本
             // 5.bindText存在动态文本
+            // 其中none为未分配类型，表示需要进一步确认
             type: 'component',
             component: tagName
         };
     }
 
     return {
-        // none表示需要进一步确认
         type: 'none',
         tagName, attrs: newAttrs, children: newChildren
     };
