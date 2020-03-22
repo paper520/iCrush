@@ -47,3 +47,17 @@ export function isValidKey(key) {
         console.error('[iCrush warn]: The beginning of _ or $ is not allowed：' + key);
     }
 };
+
+/**
+ * 在指定上下文下获取字符串的值
+ * @param {object} target 
+ * @param {'string'} text 
+ * @return {string} 解析后的字符串
+ */
+export function compilerText(target, text) {
+    let getText = function (str) {
+        return eval(str);
+    };
+
+    return getText.call(target, text);
+}

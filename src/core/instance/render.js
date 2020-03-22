@@ -17,6 +17,7 @@ export function renderMixin(iCrush) {
         // 获取虚拟结点
         this._vnode = this.$$render(createElement);
 
+        console.log(this._vnode);
 
         //  挂载好了以后，启动监听
         watcher(this);
