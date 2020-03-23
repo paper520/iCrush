@@ -39,6 +39,12 @@ export function initMixin(iCrush) {
             this[key] = options.methods[key];
         }
 
+        // 挂载数据
+        for (let key in this._data) {
+            // 数据的校验在监听的时候进行
+            this[key] = this._data[key];
+        }
+
     };
 
 };

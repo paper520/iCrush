@@ -282,6 +282,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         // 由于key的特殊性，注册前需要进行校验
         isValidKey(key);
         this[key] = options.methods[key];
+      } // 挂载数据
+
+
+      for (var _key in this._data) {
+        // 数据的校验在监听的时候进行
+        this[_key] = this._data[_key];
       }
     };
   }
@@ -587,7 +593,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     else if (vnode.type == 'tag') {
         el = document.createElement(vnode.tagName);
 
-        if (pEl.nodeName == 'I-CRUSH-COMPONENT') {
+        if (pEl.nodeName == 'I-CRUSH-COMPONENT' || pEl._nodeName == 'I-CRUSH-COMPONENT') {
           // 作为临时占位的结点，我们应该替换而不是追加
           replaceDom(pEl, el);
           that._el = el;
@@ -600,11 +606,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
           mountDom(that, key + ".children[" + i + "]", el, iCrush);
         }
       } // 3.普通文本
-      else if (vnode.type = 'text') {
+      else if (vnode.type == 'text') {
           el = document.createTextNode(vnode.content);
           pEl.appendChild(el);
         } // 4.绑定文本
-        else if (vnode.type = 'bindText') {
+        else if (vnode.type == 'bindText') {
             el = document.createTextNode(compilerText(that, vnode.content));
             pEl.appendChild(el);
           } // 其它应该抛错
@@ -805,7 +811,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       if (!template || !isString(template)) {
         // 直接选择el
         template = outHTML(this._el);
-        this._el.innerHTML = "";
+        this._el._nodeName = 'I-CRUSH-COMPONENT';
       } // 根据template生成render函数
 
 

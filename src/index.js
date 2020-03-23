@@ -42,7 +42,7 @@ iCrush.prototype.$$mount = function () {
 
       // 直接选择el
       template = outHTML(this._el);
-      this._el.innerHTML = "";
+      this._el._nodeName = 'I-CRUSH-COMPONENT';
     }
 
     // 根据template生成render函数

@@ -41,11 +41,11 @@ function mountDom(that, key, pEl, iCrush) {
     else if (vnode.type == 'tag') {
 
         el = document.createElement(vnode.tagName);
-        if (pEl.nodeName == 'I-CRUSH-COMPONENT') {
+        if (pEl.nodeName == 'I-CRUSH-COMPONENT' || pEl._nodeName == 'I-CRUSH-COMPONENT') {
 
             // 作为临时占位的结点，我们应该替换而不是追加
             replaceDom(pEl, el);
-            that._el=el;
+            that._el = el;
 
         } else {
             pEl.appendChild(el);
@@ -58,7 +58,7 @@ function mountDom(that, key, pEl, iCrush) {
     }
 
     // 3.普通文本
-    else if (vnode.type = 'text') {
+    else if (vnode.type == 'text') {
 
         el = document.createTextNode(vnode.content);
         pEl.appendChild(el);
@@ -66,7 +66,7 @@ function mountDom(that, key, pEl, iCrush) {
     }
 
     // 4.绑定文本
-    else if (vnode.type = 'bindText') {
+    else if (vnode.type == 'bindText') {
 
         el = document.createTextNode(compilerText(that, vnode.content));
         pEl.appendChild(el);
