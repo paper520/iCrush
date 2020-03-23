@@ -238,6 +238,14 @@
         }
         return newTagName;
     }
+    /**
+     * 替换DOM
+     * @param {DOM} oldEl 
+     * @param {DOM} newEl 
+     */
+    function replaceDom(oldEl, newEl) {
+        oldEl.parentNode.replaceChild(newEl, oldEl);
+    }
 
     /**
      * 比如：检查参数是否合法，标记组件，部分数据需要预处理等基本操作
@@ -603,10 +611,14 @@
         // 2.普通标签
         else if (vnode.type == 'tag') {
 
-
-
             el = document.createElement(vnode.tagName);
-            if (pEl.nodeName == 'I-CRUSH-COMPONENT') ; else {
+            if (pEl.nodeName == 'I-CRUSH-COMPONENT') {
+
+                // 作为临时占位的结点，我们应该替换而不是追加
+                replaceDom(pEl, el);
+                that._el=el;
+
+            } else {
                 pEl.appendChild(el);
             }
 
@@ -858,6 +870,7 @@
 
           // 直接选择el
           template = outHTML(this._el);
+          this._el.innerHTML = "";
         }
 
         // 根据template生成render函数

@@ -8,7 +8,7 @@ class taskLoaderPlugin {
 
         // 每次编译前调用
         compiler.hooks.make.tap(pluginName, compilation => {
-            console.log('// icrush-loader-plugin');
+            // console.log('// icrush-loader-plugin');
         });
 
     }

@@ -1,5 +1,5 @@
 import get from '@yelloxing/core.js/get';
-import { tagToComponent, compilerText } from '../../helper';
+import { tagToComponent, compilerText, replaceDom } from '../../helper';
 
 // 挂载结点的任务主要有以下内容：
 // 1.生成真实dom并挂载好
@@ -40,10 +40,12 @@ function mountDom(that, key, pEl, iCrush) {
     // 2.普通标签
     else if (vnode.type == 'tag') {
 
-
-
         el = document.createElement(vnode.tagName);
         if (pEl.nodeName == 'I-CRUSH-COMPONENT') {
+
+            // 作为临时占位的结点，我们应该替换而不是追加
+            replaceDom(pEl, el);
+            that._el=el;
 
         } else {
             pEl.appendChild(el);

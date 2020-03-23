@@ -86,3 +86,12 @@ export function tagToComponent(tagName) {
 
     return newTagName;
 };
+
+/**
+ * 替换DOM
+ * @param {DOM} oldEl 
+ * @param {DOM} newEl 
+ */
+export function replaceDom(oldEl, newEl) {
+    oldEl.parentNode.replaceChild(newEl, oldEl);
+};

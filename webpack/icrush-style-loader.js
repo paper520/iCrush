@@ -3,9 +3,9 @@
 
 module.exports = function loader(source) {
 
-    console.log('================================begin');
-    console.log(source);
-    console.log('================================end');
+    // console.log('================================begin');
+    // console.log(source);
+    // console.log('================================end');
 
     return source;
 };
