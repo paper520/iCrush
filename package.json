@@ -31,7 +31,6 @@
     "terser": "^4.1.2"
   },
   "dependencies": {
-    "@yelloxing/core.js": "^0.2.6",
-    "xhtml.js": "^1.1.0"
+    "@yelloxing/core.js": "^0.2.6"
   }
 }

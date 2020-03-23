@@ -74,7 +74,7 @@ let getRenderFactory = function (deepArrayItem) {
 
     // 因为文本不存在孩子和属性
     // 自己作为字符串成为孩子即可
-    if (deepArrayItem.type == 'text') return "createElement(\"" + deepArrayItem.tag + "\")";
+    if (deepArrayItem.type == 'text') return "\"" + deepArrayItem.tag + "\"";
 
     // 对于结点，分析出tagName和属性
     let analyResult = analyTag(deepArrayItem.tag), children = "[";
@@ -83,7 +83,7 @@ let getRenderFactory = function (deepArrayItem) {
     for (let i = 0; i < deepArrayItem.children.length; i++) {
         children += getRenderFactory(deepArrayItem.children[i]) + ",";
     }
-    children.replace(/,$/, "");
+    children = children.replace(/,$/, "");
     children += "]";
 
     return "createElement(\"" + analyResult.tagName + "\"," + JSON.stringify(analyResult.attrs) + "," + children + ")";

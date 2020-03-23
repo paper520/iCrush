@@ -19,6 +19,32 @@ window.icrush = new iCrush({
   // 配置启动方法
   render: createElement => createElement(App),
 
+  // render: function (createElement) {
+  //   return createElement("div", {}, [
+  //     createElement("label", {
+  //       "for": "''"
+  //     }, [
+  //       createElement("测试"),
+  //     ]),
+  //     createElement("input", {
+  //       "class": "'itc'",
+  //       "id": "'itd'"
+  //     }, []),
+  //     createElement("文本"),
+  //     createElement("ul", {}, [
+  //       createElement("li", {}, [
+  //         createElement("1"),
+  //       ]),
+  //       createElement("li", {}, [
+  //         createElement("2"),
+  //       ]),
+  //       createElement("li", {}, [
+  //         createElement("3"),
+  //       ]),
+  //     ]),
+  //   ])
+  // },
+
   created() {
     console.warn(this);
   }

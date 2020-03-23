@@ -13,7 +13,7 @@ import isString from '@yelloxing/core.js/isString';
  * @param {array[vnode|string]} children 孩子元素 
  * @return {element} 返回vnode
  */
-export default function (tagName, attrs, children) {
+export default function (tagName, attrs = {}, children = []) {
 
     // 把组件和普通结点区分开
     // 当然，这里的普通结点也可能是动态组件和扩展的组件
@@ -85,15 +85,16 @@ export default function (tagName, attrs, children) {
 
     } else {
         return {
-            // 一共分五类：
-            // 1.component普通组件
+            // 一共分这几类：
+            // 1.component组件
             // 2.tag普通标签
-            // 3.dynamicComponent动态组件
-            // 4.text普通文本
-            // 5.bindText存在动态文本
+            // 3.text普通文本
+            // 4.bindText存在动态文本
             // 其中none为未分配类型，表示需要进一步确认
             type: 'component',
-            component: tagName
+            component: tagName,
+            attrs: {},
+            children: []
         };
     }
 

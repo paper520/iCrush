@@ -24,7 +24,7 @@ export function renderMixin(iCrush) {
 
         // 以指令为例，指令在挂载的真实DOM销毁的时候，应该主动销毁自己
         // 类似这样的管理应该由指令自己提供
-        mountDom(this, '_vnode');
+        mountDom(this, '_vnode', this._el, iCrush);
 
         // 挂载好了以后，启动监听
         watcher(this);
