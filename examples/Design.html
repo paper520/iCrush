@@ -35,7 +35,7 @@
             // el: document.getElementById('root'),
             el: "#root",
             // 数据
-            data() {
+            data: function () {
                 return {
                     flag1: "标志1",
                     flag2: "标志2"
@@ -44,44 +44,44 @@
 
             // 方法
             methods: {
-                doit1() {
+                doit1: function () {
                     alert(this.flag2);
                 },
-                doit2() {
+                doit2: function () {
                     alert(this.flag2);
                 }
             },
 
             // 生命周期
-            beforeCreate() {
+            beforeCreate: function () {
                 console.warn("beforeCreate");
                 console.log(this);
             },
-            created() {
+            created: function () {
                 console.warn("created");
                 printInfo(this);
             },
-            beforeMount() {
+            beforeMount: function () {
                 console.warn("beforeMount");
                 printInfo(this);
             },
-            mounted() {
+            mounted: function () {
                 console.warn("mounted");
                 printInfo(this);
             },
-            beforeUpdate() {
+            beforeUpdate: function () {
                 console.warn("beforeUpdate");
                 printInfo(this);
             },
-            updated() {
+            updated: function () {
                 console.warn("updated");
                 printInfo(this);
             },
-            beforeDestroy() {
+            beforeDestroy: function () {
                 console.warn("beforeDestroy");
                 printInfo(this);
             },
-            destroyed() {
+            destroyed: function () {
                 console.warn("destroyed");
                 printInfo(this);
             }

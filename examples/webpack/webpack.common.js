@@ -15,7 +15,7 @@ module.exports = {
     }, {
       test: /\.iCrush$/,
       exclude: /node_modules/,
-      loader: ['../../webpack/icrush-loader.js']
+      loader: ['babel-loader', '../../webpack/icrush-loader.js']
     }, {
       test: /\.(png|jpg|jpeg|gif|bmp)$/,
       use: [{
@@ -28,7 +28,7 @@ module.exports = {
       }]
     }, {
       test: /\.css$/,
-      use: ['style-loader','../../webpack/icrush-style-loader.js', 'css-loader', 'postcss-loader']
+      use: ['style-loader', '../../webpack/icrush-style-loader.js', 'css-loader', 'postcss-loader']
     }]
   },
   resolve: {
