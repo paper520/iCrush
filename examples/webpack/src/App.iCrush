@@ -1,7 +1,7 @@
 <template>
   <div>
     <label for=''>测试</label>
-    <input class='itc' id='itd' />
+    <input class='itc' id='itd' i-model='info' />
     文本{{info}}
     <ul>
       <li>1</li>

@@ -13,9 +13,9 @@ import iCrush from './core/instance/index';
 initGlobalAPI(iCrush);
 
 // 挂载内置指令
-import iBind from './module/directive/i-bind'; iCrush.directive('bind', iBind);
-import iOn from './module/directive/i-on'; iCrush.directive('on', iOn);
-import iModel from './module/directive/i-model'; iCrush.directive('model', iModel);
+import iBind from './module/directive/i-bind'; iCrush.directive('iBind', iBind);
+import iOn from './module/directive/i-on'; iCrush.directive('iOn', iOn);
+import iModel from './module/directive/i-model'; iCrush.directive('iModel', iModel);
 
 // 挂载内置组件
 import component from './module/component/component'; iCrush.component('component', component);

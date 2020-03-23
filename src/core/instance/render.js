@@ -1,6 +1,10 @@
 import createElement from '../vnode/create-element';
 import mountDom from '../vnode/mount-dom';
 import watcher from '../observe/watcher';
+import isFunction from '@yelloxing/core.js/isFunction';
+import get from '@yelloxing/core.js/get';
+
+import { compilerText, replaceDom } from '../../helper';
 
 export function renderMixin(iCrush) {
 
@@ -18,13 +22,27 @@ export function renderMixin(iCrush) {
         // 获取虚拟结点
         this._vnode = this.$$render(createElement);
 
-        this.__directiveTask = {};
-        this.__componentTask = {};
-        this.__filterTask = {};
+        this.__directiveTask = [];
+        this.__componentTask = [];
+        this.__filterTask = [];
+        this.__bindTextTask = [];
 
         // 以指令为例，指令在挂载的真实DOM销毁的时候，应该主动销毁自己
         // 类似这样的管理应该由指令自己提供
         mountDom(this, '_vnode', this._el, iCrush);
+
+        // 执行指令：inserted
+        for (let i = 0; i < this.__directiveTask.length; i++) {
+            let directive = this.__directiveTask[i];
+            if (isFunction(directive.inserted)) {
+                directive.inserted(directive.el, {
+                    target: this,
+                    exp: directive.value,
+                    value: get(this, directive.value),
+                    type: directive.type
+                });
+            }
+        }
 
         // 挂载好了以后，启动监听
         watcher(this);
@@ -38,12 +56,46 @@ export function renderMixin(iCrush) {
     iCrush.prototype.$$updateComponent = function () {
         this.$$lifecycle('beforeUpdate');
 
+        // 执行指令：update
+        for (let i = 0; i < this.__directiveTask.length; i++) {
+            let directive = this.__directiveTask[i];
+            if (isFunction(directive.update)) {
+                directive.update(directive.el, {
+                    target: this,
+                    exp: directive.value,
+                    value: get(this, directive.value),
+                    type: directive.type
+                });
+            }
+        }
+
+        // 更新{{}}
+        for (let i = 0; i < this.__bindTextTask.length; i++) {
+            let bindText = this.__bindTextTask[i];
+            let el = document.createTextNode(compilerText(this, bindText.content));
+            replaceDom(bindText.el, el);
+            this.__bindTextTask[i].el = el;
+        }
+
         this.$$lifecycle('updated');
     };
 
     // 销毁组件，释放资源
     iCrush.prototype.$$destroyComponent = function () {
         this.$$lifecycle('beforeDestroy');
+
+        // 执行指令：delete
+        for (let i = 0; i < this.__directiveTask.length; i++) {
+            let directive = this.__directiveTask[i];
+            if (isFunction(directive.delete)) {
+                directive.delete(directive.el, {
+                    target: this,
+                    exp: directive.value,
+                    value: get(this, directive.value),
+                    type: directive.type
+                });
+            }
+        }
 
         this.$$lifecycle('destroyed');
     };

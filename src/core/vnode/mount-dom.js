@@ -1,5 +1,5 @@
 import get from '@yelloxing/core.js/get';
-import { tagToComponent, compilerText, replaceDom } from '../../helper';
+import { templateToName, compilerText, replaceDom } from '../../helper';
 
 // 挂载结点的任务主要有以下内容：
 // 1.生成真实dom并挂载好
@@ -17,7 +17,7 @@ function mountDom(that, key, pEl, iCrush) {
 
     // 如果是none，需要提前分类
     if (vnode.type == 'none') {
-        let ttc = tagToComponent(vnode.tagName);
+        let ttc = templateToName(vnode.tagName);
         if (that.__componentLib[ttc]) {
             vnode.component = that.__componentLib[ttc];
             vnode.type = 'component';
@@ -30,10 +30,10 @@ function mountDom(that, key, pEl, iCrush) {
     if (vnode.type == 'component') {
         el = document.createElement('i-crush-component');
         pEl.appendChild(el);
-        vnode.component.el = el;
+        vnode.options.el = el;
 
         // 这相当于子组件，挂载好了以后，启动即可
-        vnode.instance = new iCrush(vnode.component);
+        vnode.instance = new iCrush(vnode.options);
         vnode.instance.__parent = that;
     }
 
@@ -49,6 +49,32 @@ function mountDom(that, key, pEl, iCrush) {
 
         } else {
             pEl.appendChild(el);
+        }
+
+        /**
+         * 组件的属性，包括通过属性传递数据等先不考虑
+         * 我们目前只支持普通标签上的指令
+         */
+
+        for (let key in vnode.attrs) {
+            let value = vnode.attrs[key];
+            let names = (key + ":").split(':');
+            let directive = that.__directiveLib[templateToName(names[0])];
+
+            // 如果是指令
+            if (directive) {
+                that.__directiveTask.push({
+                    el,
+                    ...directive,
+                    value,
+                    type: names[1]
+                });
+            }
+
+            // 普通属性的话，直接设置即可
+            else {
+                el.setAttribute(key, value);
+            }
         }
 
         // 挂载好父亲以后，挂载孩子
@@ -71,13 +97,17 @@ function mountDom(that, key, pEl, iCrush) {
         el = document.createTextNode(compilerText(that, vnode.content));
         pEl.appendChild(el);
 
+        that.__bindTextTask.push({
+            el,
+            content: vnode.content
+        });
+
     }
 
     // 其它应该抛错
     else {
         console.error('[iCrush warn]: Type not expected：' + vnode.type);
     }
-
 };
 
 export default mountDom;

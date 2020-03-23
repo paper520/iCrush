@@ -10,6 +10,12 @@
     function mount (iCrush) {
 
         // 挂载指令
+        /*
+        [生命周期]
+        1.inserted:指令生效的时候
+        2.update:被绑定于元素所在的组件中有数据更新时调用，而无论绑定值是否变化
+        3.delete:只调用一次，指令与元素解绑时调用
+         */
         iCrush.directive = function (name, options) {
 
             iCrush.prototype.__directiveLib[name] = options;
@@ -219,7 +225,7 @@
      * 把类似'DIV'、'ui-router'和'UI-ROUTER'等分别变成'div','uiRouter','uiRouter'等
      * @param {string} tagName 
      */
-    function tagToComponent(tagName) {
+    function templateToName(tagName) {
         let lowerString = (tagName + "").toLowerCase();
         let upperString = (tagName + "").toUpperCase();
 
@@ -371,12 +377,12 @@
 
                 // 如果是简化的@event方法
                 if (/^@/.test(key)) {
-                    newAttrs[key.replace(/^@/, 'v-on:')] = attrs[key];
+                    newAttrs[key.replace(/^@/, 'i-on:')] = attrs[key];
                 }
 
                 // 如果是简化的:attr=""
                 else if (/^:/.test(key)) {
-                    newAttrs['v-bind' + key] = attrs[key];
+                    newAttrs['i-bind' + key] = attrs[key];
                 }
 
                 // 其它的是普通的
@@ -433,7 +439,7 @@
                 // 4.bindText存在动态文本
                 // 其中none为未分配类型，表示需要进一步确认
                 type: 'component',
-                component: tagName,
+                options: tagName,
                 attrs: {},
                 children: []
             };
@@ -594,7 +600,7 @@
 
         // 如果是none，需要提前分类
         if (vnode.type == 'none') {
-            let ttc = tagToComponent(vnode.tagName);
+            let ttc = templateToName(vnode.tagName);
             if (that.__componentLib[ttc]) {
                 vnode.component = that.__componentLib[ttc];
                 vnode.type = 'component';
@@ -607,10 +613,10 @@
         if (vnode.type == 'component') {
             el = document.createElement('i-crush-component');
             pEl.appendChild(el);
-            vnode.component.el = el;
+            vnode.options.el = el;
 
             // 这相当于子组件，挂载好了以后，启动即可
-            vnode.instance = new iCrush(vnode.component);
+            vnode.instance = new iCrush(vnode.options);
             vnode.instance.__parent = that;
         }
 
@@ -626,6 +632,32 @@
 
             } else {
                 pEl.appendChild(el);
+            }
+
+            /**
+             * 组件的属性，包括通过属性传递数据等先不考虑
+             * 我们目前只支持普通标签上的指令
+             */
+
+            for (let key in vnode.attrs) {
+                let value = vnode.attrs[key];
+                let names = (key + ":").split(':');
+                let directive = that.__directiveLib[templateToName(names[0])];
+
+                // 如果是指令
+                if (directive) {
+                    that.__directiveTask.push({
+                        el,
+                        ...directive,
+                        value,
+                        type: names[1]
+                    });
+                }
+
+                // 普通属性的话，直接设置即可
+                else {
+                    el.setAttribute(key, value);
+                }
             }
 
             // 挂载好父亲以后，挂载孩子
@@ -648,13 +680,17 @@
             el = document.createTextNode(compilerText(that, vnode.content));
             pEl.appendChild(el);
 
+            that.__bindTextTask.push({
+                el,
+                content: vnode.content
+            });
+
         }
 
         // 其它应该抛错
         else {
             console.error('[iCrush warn]: Type not expected：' + vnode.type);
         }
-
     }
 
     /**
@@ -725,13 +761,27 @@
             // 获取虚拟结点
             this._vnode = this.$$render(createElement);
 
-            this.__directiveTask = {};
-            this.__componentTask = {};
-            this.__filterTask = {};
+            this.__directiveTask = [];
+            this.__componentTask = [];
+            this.__filterTask = [];
+            this.__bindTextTask = [];
 
             // 以指令为例，指令在挂载的真实DOM销毁的时候，应该主动销毁自己
             // 类似这样的管理应该由指令自己提供
             mountDom(this, '_vnode', this._el, iCrush);
+
+            // 执行指令：inserted
+            for (let i = 0; i < this.__directiveTask.length; i++) {
+                let directive = this.__directiveTask[i];
+                if (isFunction(directive.inserted)) {
+                    directive.inserted(directive.el, {
+                        target: this,
+                        exp: directive.value,
+                        value: get(this, directive.value),
+                        type: directive.type
+                    });
+                }
+            }
 
             // 挂载好了以后，启动监听
             watcher(this);
@@ -745,12 +795,46 @@
         iCrush.prototype.$$updateComponent = function () {
             this.$$lifecycle('beforeUpdate');
 
+            // 执行指令：update
+            for (let i = 0; i < this.__directiveTask.length; i++) {
+                let directive = this.__directiveTask[i];
+                if (isFunction(directive.update)) {
+                    directive.update(directive.el, {
+                        target: this,
+                        exp: directive.value,
+                        value: get(this, directive.value),
+                        type: directive.type
+                    });
+                }
+            }
+
+            // 更新{{}}
+            for (let i = 0; i < this.__bindTextTask.length; i++) {
+                let bindText = this.__bindTextTask[i];
+                let el = document.createTextNode(compilerText(this, bindText.content));
+                replaceDom(bindText.el, el);
+                this.__bindTextTask[i].el = el;
+            }
+
             this.$$lifecycle('updated');
         };
 
         // 销毁组件，释放资源
         iCrush.prototype.$$destroyComponent = function () {
             this.$$lifecycle('beforeDestroy');
+
+            // 执行指令：delete
+            for (let i = 0; i < this.__directiveTask.length; i++) {
+                let directive = this.__directiveTask[i];
+                if (isFunction(directive.delete)) {
+                    directive.delete(directive.el, {
+                        target: this,
+                        exp: directive.value,
+                        value: get(this, directive.value),
+                        type: directive.type
+                    });
+                }
+            }
 
             this.$$lifecycle('destroyed');
         };
@@ -838,11 +922,166 @@
     lifecycleMixin(iCrush);// 和组件的生命周期相关调用
     renderMixin(iCrush);// 组件渲染或更新相关
 
-    var iBind = {};
+    /**
+     * 用于数据单向绑定
+     * =========================================
+     * v-bind="express"
+     */
 
-    var iOn = {};
+    let update = function (el, binding) {
 
-    var iModel = {};
+      console.log(el, binding);
+
+    };
+
+    var iBind = {
+      inserted: update,
+      update
+    };
+
+    function createCommonjsModule(fn, module) {
+    	return module = { exports: {} }, fn(module, module.exports), module.exports;
+    }
+
+    var xhtml_min = createCommonjsModule(function (module) {
+    function isNativeReflectConstruct(){if(typeof Reflect==="undefined"||!Reflect.construct)return false;if(Reflect.construct.sham)return false;if(typeof Proxy==="function")return true;try{Date.prototype.toString.call(Reflect.construct(Date,[],function(){}));return true}catch(e){return false}}function _construct(Parent,args,Class){if(isNativeReflectConstruct()){_construct=Reflect.construct;}else {_construct=function _construct(Parent,args,Class){var a=[null];a.push.apply(a,args);var Constructor=Function.bind.apply(Parent,a);var instance=new Constructor;if(Class)_setPrototypeOf(instance,Class.prototype);return instance};}return _construct.apply(null,arguments)}function _setPrototypeOf(o,p){_setPrototypeOf=Object.setPrototypeOf||function _setPrototypeOf(o,p){o.__proto__=p;return o};return _setPrototypeOf(o,p)}function _toConsumableArray(arr){return _arrayWithoutHoles(arr)||_iterableToArray(arr)||_nonIterableSpread()}function _nonIterableSpread(){throw new TypeError("Invalid attempt to spread non-iterable instance")}function _iterableToArray(iter){if(Symbol.iterator in Object(iter)||Object.prototype.toString.call(iter)==="[object Arguments]")return Array.from(iter)}function _arrayWithoutHoles(arr){if(Array.isArray(arr)){for(var i=0,arr2=new Array(arr.length);i<arr.length;i++){arr2[i]=arr[i];}return arr2}}function _typeof(obj){if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){_typeof=function _typeof(obj){return typeof obj};}else {_typeof=function _typeof(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj};}return _typeof(obj)}(function(){var MAX_SAFE_INTEGER=9007199254740991;function isLength(value){return typeof value=="number"&&value>-1&&value%1==0&&value<=MAX_SAFE_INTEGER}function isArrayLike(value){return value!=null&&typeof value!="function"&&isLength(value.length)}var toString=Object.prototype.toString;function getType(value){if(value==null){return value===undefined?"[object Undefined]":"[object Null]"}return toString.call(value)}function isString(value){var type=_typeof(value);return type==="string"||type==="object"&&value!=null&&!Array.isArray(value)&&getType(value)==="[object String]"}function isArraySpec(value){return isArrayLike(value)&&!isString(value)}var concat=function concat(newArray,values){for(var i=0;i<values.length;i++){if(isArraySpec(values[i])){if(values[i].length>1){concat(newArray,values[i]);}else if(values[i].length===1){newArray.push(values[i][0]);}}else {newArray.push(values[i]);}}};function concat$1(){var newArray=[];for(var _len=arguments.length,values=new Array(_len),_key=0;_key<_len;_key++){values[_key]=arguments[_key];}concat(newArray,values);return newArray}function isPlainObject(value){if(value===null||_typeof(value)!=="object"||getType(value)!="[object Object]"){return false}if(Object.getPrototypeOf(value)===null){return true}var proto=value;while(Object.getPrototypeOf(proto)!==null){proto=Object.getPrototypeOf(proto);}return Object.getPrototypeOf(value)===proto}function isElement(value){return value!==null&&_typeof(value)==="object"&&(value.nodeType===1||value.nodeType===9||value.nodeType===11)&&!isPlainObject(value)}function isObject(value){var type=_typeof(value);return value!=null&&(type==="object"||type==="function")}var xhtml=function xhtml(){for(var _len2=arguments.length,nodes=new Array(_len2),_key2=0;_key2<_len2;_key2++){nodes[_key2]=arguments[_key2];}return new xhtml.prototype.init(nodes)};xhtml.prototype.init=function(nodes){nodes=concat$1.apply(void 0,_toConsumableArray(nodes));this.length=0;for(var i=0;i<nodes.length;i++){if(isElement(nodes[i])){this[this.length]=nodes[i];this.length+=1;}}return this};xhtml.prototype.extend=xhtml.extend=function(){var target=arguments[0]||{};var source=arguments[1]||{};var length=arguments.length;if(length===1){source=target;target=this;}if(!isObject(target)){target={};}for(var key in source){try{target[key]=source[key];}catch(e){throw new Error("Illegal property value！")}}return target};xhtml.prototype.init.prototype=xhtml.prototype;var toNode=function toNode(template){var frame=document.createElement("div");frame.innerHTML=template;var childNodes=frame.childNodes;for(var i=0;i<childNodes.length;i++){if(isElement(childNodes[i])){return childNodes[i]}}return null};function toNode$1(template){if(isElement(template)){return template}else if(isString(template)){return toNode(template)}else {throw new Error("Illegal template!")}}function isFunction(value){if(!isObject(value)){return false}var type=getType(value);return type==="[object Function]"||type==="[object AsyncFunction]"||type==="[object GeneratorFunction]"||type==="[object Proxy]"}function append(node){if(this.length>0){this[0].appendChild(toNode$1(node));}return this}function prepend(node){if(this.length>0){this[0].insertBefore(toNode$1(node),this[0].childNodes[0]);}return this}function after(node){if(this.length>0){this[0].parentNode.insertBefore(toNode$1(node),this[0].nextSibling);}return this}function before(node){if(this.length>0){this[0].parentNode.insertBefore(toNode$1(node),this[0]);}return this}function find(tagName,checkback){if(isFunction(tagName)||arguments.length<1){checkback=tagName;tagName="*";}var nodes=this[0].getElementsByTagName(tagName);if(!isFunction(checkback)){return this["new"](nodes)}var xhtmlObj=this["new"]();for(var i=0;i<nodes.length;i++){if(checkback(nodes[i])){xhtmlObj[xhtmlObj.length++]=nodes[i];}}return xhtmlObj}function parents(checkback,stopback){var nodes=[],node=this[0].parentNode;while(isElement(node)){if(!isFunction(checkback)||checkback(node)){nodes.push(node);}if(isFunction(stopback)&&stopback(node)){break}node=node.parentNode;}return this["new"](nodes)}function children(checkback){var nodes=this[0].childNodes,xhtmlObj=this["new"]();for(var i=0;i<nodes.length;i++){if(isElement(nodes[i])&&(!isFunction(checkback)||checkback(nodes[i]))){xhtmlObj[xhtmlObj.length++]=nodes[i];}}return xhtmlObj}function eq(index){var xhtmlObj=this["new"]();if(this.length>index){xhtmlObj[0]=this[index];xhtmlObj.length=1;}return xhtmlObj}function remove(){for(var i=0;i<this.length;i++){this[i].parentNode.removeChild(this[i]);}return this}var classHelper={has:function has(targetClass,checkClass){targetClass=" "+targetClass+" ";checkClass=" "+checkClass.trim()+" ";return targetClass.indexOf(checkClass)>-1},delete:function _delete(targetClass,checkClass){targetClass=" "+targetClass+" ";checkClass=" "+checkClass.trim()+" ";while(targetClass.indexOf(checkClass)>-1){targetClass=targetClass.replace(checkClass," ");}return targetClass.trim().replace(/ +/g," ")}};function attr(attr,val){if(arguments.length<2){return this.length>0?this[0].getAttribute(attr):undefined}for(var i=0;i<this.length;i++){this[i].setAttribute(attr,val);}return this}function hasClass(clazz){var oldClazz=this[0].getAttribute("class");return classHelper.has(oldClazz,clazz)}function removeClass(clazz){var oldClazz=this[0].getAttribute("class");var newClazz=classHelper["delete"](oldClazz,clazz);this[0].setAttribute("class",newClazz);return this}function addClass(clazz){var oldClazz=this[0].getAttribute("class");if(!classHelper.has(oldClazz,clazz)){this[0].setAttribute("class",oldClazz+" "+clazz);}return this}function toggerClass(clazz){var oldClazz=this[0].getAttribute("class");if(classHelper.has(oldClazz,clazz)){var newClazz=classHelper["delete"](oldClazz,clazz);this[0].setAttribute("class",newClazz);}else {this[0].setAttribute("class",oldClazz+" "+clazz);}return this}function getStyle(dom,name){var allStyle=document.defaultView&&document.defaultView.getComputedStyle?document.defaultView.getComputedStyle(dom,null):dom.currentStyle;return typeof name==="string"?allStyle.getPropertyValue(name):allStyle}function css(){if(arguments.length<=1&&(arguments.length<=0||_typeof(arguments[0])!=="object")){if(this.length<=0)return;return getStyle(this[0],arguments[0])}for(var i=0;i<this.length;i++){if(arguments.length===1){for(var key in arguments[0]){this[i].style[key]=arguments[0][key];}}else this[i].style[arguments[0]]=arguments[1];}return this}function stopPropagation(event){event=event||window.event;if(event.stopPropagation){event.stopPropagation();}else {event.cancelBubble=true;}}function preventDefault(event){event=event||window.event;if(event.preventDefault){event.preventDefault();}else {event.returnValue=false;}}function bind(eventType,callback){if(window.attachEvent){for(var i=0;i<this.length;i++){this[i].attachEvent("on"+eventType,callback);}}else {for(var _i=0;_i<this.length;_i++){this[_i].addEventListener(eventType,callback,false);}}return this}function unbind(eventType,handler){if(window.detachEvent){for(var i=0;i<this.length;i++){this[i].detachEvent("on"+eventType,handler);}}else {for(var _i2=0;_i2<this.length;_i2++){this[_i2].removeEventListener(eventType,handler,false);}}return this}function trigger(eventType){var i,event;if(document.createEventObject){event=document.createEventObject();for(i=0;i<this.length;i++){this[i].fireEvent("on"+eventType,event);}}else {event=document.createEvent("HTMLEvents");event.initEvent(eventType,true,false);for(i=0;i<this.length;i++){this[i].dispatchEvent(event);}}return this}function size(type){var dom=this[0],elemHeight,elemWidth;if(type=="content"){elemWidth=dom.clientWidth-(getStyle(dom,"padding-left")+"").replace("px","")-(getStyle(dom,"padding-right")+"").replace("px","");elemHeight=dom.clientHeight-(getStyle(dom,"padding-top")+"").replace("px","")-(getStyle(dom,"padding-bottom")+"").replace("px","");}else if(type=="padding"){elemWidth=dom.clientWidth;elemHeight=dom.clientHeight;}else if(type=="border"){elemWidth=dom.offsetWidth;elemHeight=dom.offsetHeight;}else if(type=="scroll"){elemWidth=dom.scrollWidth;elemHeight=dom.scrollHeight;}else {elemWidth=dom.offsetWidth;elemHeight=dom.offsetHeight;}return {width:elemWidth,height:elemHeight}}function mousePosition(event){var bounding=this[0].getBoundingClientRect();if(!event||!event.clientX)throw new Error("Event is necessary!");return {x:event.clientX-bounding.left,y:event.clientY-bounding.top}}function offsetPosition(){var left=0,top=0,dom=this[0];top=dom.offsetTop;left=dom.offsetLeft;dom=dom.offsetParent;while(dom){top+=dom.offsetTop;left+=dom.offsetLeft;dom=dom.offsetParent;}return {left:left,top:top}}xhtml.prototype.extend({append:append,prepend:prepend,after:after,before:before,find:find,parents:parents,children:children,eq:eq,remove:remove,attr:attr,css:css,hasClass:hasClass,addClass:addClass,removeClass:removeClass,toggerClass:toggerClass,bind:bind,unbind:unbind,trigger:trigger,size:size,mousePosition:mousePosition,offsetPosition:offsetPosition});xhtml.extend({stopPropagation:stopPropagation,preventDefault:preventDefault});xhtml.prototype["new"]=function(){for(var _len3=arguments.length,nodes=new Array(_len3),_key3=0;_key3<_len3;_key3++){nodes[_key3]=arguments[_key3];}return _construct(xhtml,nodes)};if((_typeof(module))==="object"&&_typeof(module.exports)==="object"){module.exports=xhtml;}else {var _xhtml=window.xhtml;xhtml.noConflict=function(deep){window.xhtml=_xhtml;return xhtml};window.xhtml=xhtml;}})();
+    });
+
+    var iOn = {
+      inserted: function (el, binding) {
+
+        let types = binding.type.split('.');
+
+        xhtml_min(el).bind(types[0], function () {
+          alert('test');
+        });
+      },
+      delete: function (el, binding) {
+
+        console.log(el, binding);
+
+      }
+    };
+
+    /**
+     * 设置值的基本方法（没有进行值检查）
+     *
+     * @private
+     * @param {Object} object 设置的对象
+     * @param {string} key 需要设置的属性
+     * @param {*} value 设置的值
+     */
+    function baseAssignValue (object, key, value) {
+        if (key == '__proto__') {
+            Object.defineProperty(object, key, {
+                'configurable': true,
+                'enumerable': true,
+                'value': value,
+                'writable': true
+            });
+        } else {
+            object[key] = value;
+        }
+    }
+
+    /**
+     *设置对象的值
+     *
+     * @private
+     * @param {Object} object 设置的对象
+     * @param {string} key 需要设置的属性
+     * @param {*} value 设置的值
+     */
+    function assignValue (object, key, value) {
+        baseAssignValue(object, key, value);
+    }
+
+    /**
+     * 设置一个对象属性值的基础方法。
+     *
+     * @private
+     * @param {Object} object 设置的对象
+     * @param {Array|string} path 对象上设置值的路径
+     * @param {*} value 设置的值
+     * @param {*} customizer 可选，一个函数，用于返回补充的类型（比如[],{}等）
+     * @returns {Object} 返回一个对象
+     */
+    function baseSet (object, path, value, customizer) {
+        if (!isObject(object)) {
+            return object;
+        }
+        path = castPath(path, object);
+
+        let nested = object;
+
+        for (let index = 0; index < path.length; index++) {
+            const key = toKey(path[index]);
+            let newValue = value;
+
+            // 如果不是最后一个，需要一些检测
+            if (index + 1 != path.length) {
+
+                const objValue = nested[key];
+
+                // 可能有的时候，原来的对象层次不足，需要补充，这里是选择应该补充什么类型
+                if (!isObject(objValue)) {
+
+                    newValue = customizer ? customizer(objValue, key, nested) : undefined;
+                    if (newValue === undefined) {
+                        newValue = {};
+                    }
+                } else {
+                    newValue = objValue;
+                }
+            }
+
+            assignValue(nested, key, newValue);
+            nested = nested[key];
+        }
+
+        return object;
+    }
+
+    /**
+     * 设置object的属性path的新值，返回设置后的对象。
+     *
+     * @since V0.1.0
+     * @public
+     * @param {Object} object 设置的对象
+     * @param {Array|string} path 对象上设置值的路径
+     * @param {*} value 设置的值
+     * @param {*} customizer 可选，一个函数，用于返回补充的类型（比如[],{}等）
+     * @returns {Object} 返回一个对象
+     * @example
+     *
+     * var object={a:{b:[1,2,3]}};
+     *
+     * set(object,'a.b.c',10)
+     * // {a:{b:[1,2,3]}}
+     */
+    function set (object, path, value, customizer) {
+        customizer = typeof customizer === 'function' ? customizer : undefined;
+        return object == null ? object : baseSet(object, path, value, customizer);
+    }
+
+    /**
+     * 用于数据双向绑定
+     * =========================================
+     * v-model="express"
+     */
+
+    var iModel = {
+      inserted: function (el, binding) {
+        el.value = binding.value;
+        xhtml_min(el).bind('input', () => {
+          set(binding.target, binding.exp, el.value);
+        });
+
+      },
+      update: function (el, binding) {
+        el.value = binding.value;
+      }
+    };
 
     var component = {};
 
@@ -858,9 +1097,9 @@
 
     // 挂载全局方法
     initGlobalAPI(iCrush);
-     iCrush.directive('bind', iBind);
-     iCrush.directive('on', iOn);
-     iCrush.directive('model', iModel);
+     iCrush.directive('iBind', iBind);
+     iCrush.directive('iOn', iOn);
+     iCrush.directive('iModel', iModel);
      iCrush.component('component', component);
      iCrush.filter('number', number);
 

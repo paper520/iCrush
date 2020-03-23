@@ -30,12 +30,12 @@ export default function (tagName, attrs = {}, children = []) {
 
             // 如果是简化的@event方法
             if (/^@/.test(key)) {
-                newAttrs[key.replace(/^@/, 'v-on:')] = attrs[key];
+                newAttrs[key.replace(/^@/, 'i-on:')] = attrs[key];
             }
 
             // 如果是简化的:attr=""
             else if (/^:/.test(key)) {
-                newAttrs['v-bind' + key] = attrs[key];
+                newAttrs['i-bind' + key] = attrs[key];
             }
 
             // 其它的是普通的
@@ -92,7 +92,7 @@ export default function (tagName, attrs = {}, children = []) {
             // 4.bindText存在动态文本
             // 其中none为未分配类型，表示需要进一步确认
             type: 'component',
-            component: tagName,
+            options: tagName,
             attrs: {},
             children: []
         };

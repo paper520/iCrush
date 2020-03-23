@@ -66,7 +66,7 @@ export function compilerText(target, text) {
  * 把类似'DIV'、'ui-router'和'UI-ROUTER'等分别变成'div','uiRouter','uiRouter'等
  * @param {string} tagName 
  */
-export function tagToComponent(tagName) {
+export function templateToName(tagName) {
     let lowerString = (tagName + "").toLowerCase();
     let upperString = (tagName + "").toUpperCase();
 
