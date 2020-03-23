@@ -1,4 +1,5 @@
 import createElement from '../vnode/create-element';
+import mountDom from '../vnode/mount-dom';
 import watcher from '../observe/watcher';
 
 export function renderMixin(iCrush) {
@@ -17,9 +18,15 @@ export function renderMixin(iCrush) {
         // 获取虚拟结点
         this._vnode = this.$$render(createElement);
 
-        console.log(this._vnode);
+        this.__directiveTask = {};
+        this.__componentTask = {};
+        this.__filterTask = {};
 
-        //  挂载好了以后，启动监听
+        // 以指令为例，指令在挂载的真实DOM销毁的时候，应该主动销毁自己
+        // 类似这样的管理应该由指令自己提供
+        mountDom(this, '_vnode');
+
+        // 挂载好了以后，启动监听
         watcher(this);
 
         // 标记已经挂载

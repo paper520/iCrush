@@ -12,15 +12,21 @@
         // 挂载指令
         iCrush.directive = function (name, options) {
 
+            iCrush.prototype.__directiveLib[name] = options;
+
         };
 
         // 挂载组件
         iCrush.component = function (name, options) {
 
+            iCrush.prototype.__componentLib[name] = options;
+
         };
 
         // 挂载过滤器
         iCrush.filter = function (name, options) {
+
+            iCrush.prototype.__filterLib[name] = options;
 
         };
 
@@ -41,6 +47,10 @@
      */
 
     function initGlobalAPI (iCrush) {
+
+        iCrush.prototype.__directiveLib = {};
+        iCrush.prototype.__componentLib = {};
+        iCrush.prototype.__filterLib = {};
 
         mount(iCrush);
         use(iCrush);
@@ -339,31 +349,37 @@
                             content: ("\" " + child + " \"").replace(/\{\{([^}]+)\}\}/g, "\"+this.$1+\"")
                         });
                     } else {
+
+                        // 普通文本和bind文本区别开的目的是加速计算
+                        // 针对普通文本
+                        // 控制器的数据改变不需要去理会这里的内容
                         newChildren.push({
                             type: 'text',
                             content: child
                         });
                     }
                 } else {
+
+                    // 非字符串，也就是非文本的结点
                     newChildren.push(child);
                 }
             }
 
         } else {
             return {
-                // 一共分三类：
+                // 一共分五类：
                 // 1.component普通组件
                 // 2.tag普通标签
                 // 3.dynamicComponent动态组件
                 // 4.text普通文本
                 // 5.bindText存在动态文本
+                // 其中none为未分配类型，表示需要进一步确认
                 type: 'component',
                 component: tagName
             };
         }
 
         return {
-            // none表示需要进一步确认
             type: 'none',
             tagName, attrs: newAttrs, children: newChildren
         };
@@ -438,9 +454,11 @@
             // 获取虚拟结点
             this._vnode = this.$$render(createElement);
 
-            console.log(this._vnode);
+            this.__directiveTask = {};
+            this.__componentTask = {};
+            this.__filterTask = {};
 
-            //  挂载好了以后，启动监听
+            // 挂载好了以后，启动监听
             watcher(this);
 
             // 标记已经挂载
@@ -544,6 +562,16 @@
     lifecycleMixin(iCrush);// 和组件的生命周期相关调用
     renderMixin(iCrush);// 组件渲染或更新相关
 
+    var iBind = {};
+
+    var iOn = {};
+
+    var iModel = {};
+
+    var component = {};
+
+    var number = {};
+
     /**
      * 备注：
      * $$开头的表示内部方法，__开头的表示内部资源
@@ -554,6 +582,11 @@
 
     // 挂载全局方法
     initGlobalAPI(iCrush);
+     iCrush.directive('bind', iBind);
+     iCrush.directive('on', iOn);
+     iCrush.directive('model', iModel);
+     iCrush.component('component', component);
+     iCrush.filter('number', number);
 
     // 把组件挂载到页面中去
     iCrush.prototype.$$mount = function () {

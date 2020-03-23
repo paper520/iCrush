@@ -10,7 +10,7 @@
 ## Issues
 使用的时候遇到任何问题或有好的建议，请点击进入[issue](https://github.com/yelloxing/iCrush/issues)！
 
-因为是学习项目，我们目前不打算给出使用文档（至少当前是如此定位的），不过我们有许多[测试用例](https://github.com/yelloxing/iCrush/tree/master/examples)可供参考，里面会提供各种用法并添加好备注。
+你可以[点击查阅文档](https://github.com/yelloxing/iCrush/blob/master/docs/index.md)获得接口API和入门教程，当然我们还有许多[测试用例](https://github.com/yelloxing/iCrush/tree/master/examples)可供参考，里面会提供各种用法并添加好备注。
 
 ## How to use?
 
@@ -66,7 +66,7 @@ window.icrush = new iCrush({
 </style>
 ```
 
-当然，除了.iCrush的方式外，你也可以通过iCrush.component()定义组件或者别的方法添加更多有用的扩展。
+当然，除了.iCrush的方式外，你也可以通过iCrush.component()定义组件或者别的方法添加更多有用的扩展，更多细节请[点击查阅文档](https://github.com/yelloxing/iCrush/blob/master/docs/index.md)获得帮助。
 
 ## License
 

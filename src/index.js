@@ -12,6 +12,17 @@ import iCrush from './core/instance/index';
 // 挂载全局方法
 initGlobalAPI(iCrush);
 
+// 挂载内置指令
+import iBind from './module/directive/i-bind'; iCrush.directive('bind', iBind);
+import iOn from './module/directive/i-on'; iCrush.directive('on', iOn);
+import iModel from './module/directive/i-model'; iCrush.directive('model', iModel);
+
+// 挂载内置组件
+import component from './module/component/component'; iCrush.component('component', component);
+
+// 挂载内置过滤器
+import number from './module/filter/number'; iCrush.filter('number', number);
+
 import isString from '@yelloxing/core.js/isString';
 import isFunction from '@yelloxing/core.js/isFunction';
 
