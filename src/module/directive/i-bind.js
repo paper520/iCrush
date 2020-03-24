@@ -1,14 +1,22 @@
 /**
  * 用于数据单向绑定
  * =========================================
- * v-bind="express"
+ * v-bind:XXX="express"
  */
 
 import isString from '@yelloxing/core.js/isString';
 
 let update = function (el, binding) {
 
-  console.log(el, binding);
+  // 如果有type表示给属性赋值
+  if (isString(binding.type) && binding.type.length > 0) {
+    el.setAttribute(binding.type, binding.value);
+  }
+
+  // 否则是设置内容或值
+  else {
+    el.value = el.textContent = binding.value;
+  }
 
 };
 

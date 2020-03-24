@@ -19,7 +19,7 @@ function mountDom(that, key, pEl, iCrush) {
     if (vnode.type == 'none') {
         let ttc = templateToName(vnode.tagName);
         if (that.__componentLib[ttc]) {
-            vnode.component = that.__componentLib[ttc];
+            vnode.options = that.__componentLib[ttc];
             vnode.type = 'component';
         } else {
             vnode.type = 'tag';
@@ -28,6 +28,7 @@ function mountDom(that, key, pEl, iCrush) {
 
     // 1.组件
     if (vnode.type == 'component') {
+
         el = document.createElement('i-crush-component');
         pEl.appendChild(el);
         vnode.options.el = el;

@@ -18,14 +18,13 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
   function mount(iCrush) {
     // 挂载指令
-
-    /*
-    [生命周期]
-    1.inserted:指令生效的时候
-    2.update:被绑定于元素所在的组件中有数据更新时调用，而无论绑定值是否变化
-    3.delete:只调用一次，指令与元素解绑时调用
-     */
     iCrush.directive = function (name, options) {
+      /*
+       [生命周期]
+        1.inserted:指令生效的时候
+        2.update:被绑定于元素所在的组件中有数据更新时调用，而无论绑定值是否变化
+        3.delete:只调用一次，指令与元素解绑时调用
+      */
       iCrush.prototype.__directiveLib[name] = options;
     }; // 挂载组件
 
@@ -45,19 +44,6 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
     iCrush.use = function (extend) {
       extend.install.call(extend, iCrush);
     };
-  }
-  /**
-   * =========================================
-   * 挂载全局方法
-   */
-
-
-  function initGlobalAPI(iCrush) {
-    iCrush.prototype.__directiveLib = {};
-    iCrush.prototype.__componentLib = {};
-    iCrush.prototype.__filterLib = {};
-    mount(iCrush);
-    use(iCrush);
   }
 
   var toString = Object.prototype.toString;
@@ -108,6 +94,37 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
 
     var type = getType(value);
     return type === '[object Function]' || type === '[object AsyncFunction]' || type === '[object GeneratorFunction]' || type === '[object Proxy]';
+  }
+  /**
+   * =========================================
+   * 挂载全局方法
+   */
+
+
+  function initGlobalAPI(iCrush) {
+    // 登记扩展内容
+    iCrush.prototype.__directiveLib = {};
+    iCrush.prototype.__componentLib = {};
+    iCrush.prototype.__filterLib = {}; // 挂载
+
+    mount(iCrush);
+    use(iCrush); // 过滤器调用方法
+
+    iCrush.prototype.$filter = function (filterName) {
+      var filter = this.__filterLib[filterName];
+
+      for (var _len4 = arguments.length, params = new Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+        params[_key4 - 1] = arguments[_key4];
+      }
+
+      if (!isFunction(filter)) {
+        console.error('[iCrush warn]: Filter not available：' + filterName); // 如果过滤器不存在，直接返回input
+
+        return params[0];
+      }
+
+      return filter.apply(this, params);
+    };
   }
   /**
    * 判断一个值是不是String。
@@ -298,9 +315,9 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       } // 挂载数据
 
 
-      for (var _key4 in this._data) {
+      for (var _key5 in this._data) {
         // 数据的校验在监听的时候进行
-        this[_key4] = this._data[_key4];
+        this[_key5] = this._data[_key5];
       }
     };
   }
@@ -587,7 +604,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
       var ttc = templateToName(vnode.tagName);
 
       if (that.__componentLib[ttc]) {
-        vnode.component = that.__componentLib[ttc];
+        vnode.options = that.__componentLib[ttc];
         vnode.type = 'component';
       } else {
         vnode.type = 'tag';
@@ -619,10 +636,10 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
          */
 
 
-        for (var _key5 in vnode.attrs) {
-          var value = vnode.attrs[_key5];
+        for (var _key6 in vnode.attrs) {
+          var value = vnode.attrs[_key6];
 
-          var names = (_key5 + ":").split(':');
+          var names = (_key6 + ":").split(':');
 
           var directive = that.__directiveLib[templateToName(names[0])]; // 如果是指令
 
@@ -636,7 +653,7 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
             }));
           } // 普通属性的话，直接设置即可
           else {
-              el.setAttribute(_key5, value);
+              el.setAttribute(_key6, value);
             }
         } // 挂载好父亲以后，挂载孩子
 
@@ -881,11 +898,17 @@ function _typeof2(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "funct
   /**
    * 用于数据单向绑定
    * =========================================
-   * v-bind="express"
+   * v-bind:XXX="express"
    */
 
   var update = function update(el, binding) {
-    console.log(el, binding);
+    // 如果有type表示给属性赋值
+    if (isString(binding.type) && binding.type.length > 0) {
+      el.setAttribute(binding.type, binding.value);
+    } // 否则是设置内容或值
+    else {
+        el.value = el.textContent = binding.value;
+      }
   };
 
   var iBind = {

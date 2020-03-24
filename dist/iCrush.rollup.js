@@ -10,14 +10,14 @@
     function mount (iCrush) {
 
         // 挂载指令
-        /*
-        [生命周期]
-        1.inserted:指令生效的时候
-        2.update:被绑定于元素所在的组件中有数据更新时调用，而无论绑定值是否变化
-        3.delete:只调用一次，指令与元素解绑时调用
-         */
         iCrush.directive = function (name, options) {
 
+            /*
+             [生命周期]
+              1.inserted:指令生效的时候
+              2.update:被绑定于元素所在的组件中有数据更新时调用，而无论绑定值是否变化
+              3.delete:只调用一次，指令与元素解绑时调用
+            */
             iCrush.prototype.__directiveLib[name] = options;
 
         };
@@ -44,22 +44,6 @@
         iCrush.use = function (extend) {
             extend.install.call(extend, iCrush);
         };
-
-    }
-
-    /**
-     * =========================================
-     * 挂载全局方法
-     */
-
-    function initGlobalAPI (iCrush) {
-
-        iCrush.prototype.__directiveLib = {};
-        iCrush.prototype.__componentLib = {};
-        iCrush.prototype.__filterLib = {};
-
-        mount(iCrush);
-        use(iCrush);
 
     }
 
@@ -108,6 +92,36 @@
         const type = getType(value);
         return type === '[object Function]' || type === '[object AsyncFunction]' ||
             type === '[object GeneratorFunction]' || type === '[object Proxy]';
+    }
+
+    /**
+     * =========================================
+     * 挂载全局方法
+     */
+
+    function initGlobalAPI (iCrush) {
+
+        // 登记扩展内容
+        iCrush.prototype.__directiveLib = {};
+        iCrush.prototype.__componentLib = {};
+        iCrush.prototype.__filterLib = {};
+
+        // 挂载
+        mount(iCrush);
+        use(iCrush);
+
+        // 过滤器调用方法
+        iCrush.prototype.$filter = function (filterName, ...params) {
+            let filter = this.__filterLib[filterName];
+            if (!isFunction(filter)) {
+                console.error('[iCrush warn]: Filter not available：' + filterName);
+
+                // 如果过滤器不存在，直接返回input
+                return params[0];
+            }
+            return filter.apply(this, params);
+        };
+
     }
 
     /**
@@ -602,7 +616,7 @@
         if (vnode.type == 'none') {
             let ttc = templateToName(vnode.tagName);
             if (that.__componentLib[ttc]) {
-                vnode.component = that.__componentLib[ttc];
+                vnode.options = that.__componentLib[ttc];
                 vnode.type = 'component';
             } else {
                 vnode.type = 'tag';
@@ -611,6 +625,7 @@
 
         // 1.组件
         if (vnode.type == 'component') {
+
             el = document.createElement('i-crush-component');
             pEl.appendChild(el);
             vnode.options.el = el;
@@ -925,12 +940,20 @@
     /**
      * 用于数据单向绑定
      * =========================================
-     * v-bind="express"
+     * v-bind:XXX="express"
      */
 
     let update = function (el, binding) {
 
-      console.log(el, binding);
+      // 如果有type表示给属性赋值
+      if (isString(binding.type) && binding.type.length > 0) {
+        el.setAttribute(binding.type, binding.value);
+      }
+
+      // 否则是设置内容或值
+      else {
+        el.value = el.textContent = binding.value;
+      }
 
     };
 

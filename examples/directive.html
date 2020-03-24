@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../dist/iCrush.babel.js"></script>
+    <title>主体设计 | iCrush单一测试</title>
+    <link rel="shortcut icon" href="../logo.png">
+</head>
+
+<body>
+
+    <div id='root'>
+        flag1={{flag1}}<br />
+        flag2={{flag2}}
+        <hr />
+        <input i-model='flag1' />
+        <input i-model='flag2' />
+        <hr />
+        flag1=<span i-bind='flag1' i-bind:class_flag1='flag1'>init</span><br />
+        flag2=<span i-bind='flag2' :class_flag2='flag2'>init</span>
+    </div>
+    <script>
+        window.icrush = new iCrush({
+            el: document.getElementById('root'),
+            data: function () {
+                return {
+                    flag1: "标志1",
+                    flag2: "标志2"
+                };
+            }
+        });
+    </script>
+
+</body>
+
+</html>
