@@ -4,13 +4,13 @@
  * v-model="express"
  */
 
-import xhtml from 'xhtml.js';
+import { bindEvent } from '../../helper';
 import set from '@yelloxing/core.js/set';
 
 export default {
   inserted: function (el, binding) {
     el.value = binding.value;
-    xhtml(el).bind('input', () => {
+    bindEvent(el, ['input', 'change'], () => {
       set(binding.target, binding.exp, el.value);
     });
 

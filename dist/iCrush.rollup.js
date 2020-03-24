@@ -176,6 +176,98 @@
             !isPlainObject(value);
     }
 
+    const MAX_SAFE_INTEGER = 9007199254740991;
+
+    /**
+     * 判断是不是一个可以作为长度的整数（比如数组下标）
+     *
+     * @private
+     * @param {any} value 需要判断的值
+     * @returns {boolean} 如果是返回true，否则返回false
+     */
+
+    function isLength (value) {
+
+        return typeof value == 'number' &&
+            value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+
+    }
+
+    /**
+     * 判断是不是一个类似数组的对象，是否可以通过length迭代
+     *
+     *
+     * @private
+     * @param {any} value 需要判断的值
+     * @returns {boolean} 如果是返回true，否则返回false
+     */
+
+    function isArrayLike (value) {
+
+        return value != null && typeof value != 'function' && isLength(value.length);
+
+    }
+
+    const toString$1 = Object.prototype.toString;
+
+    /**
+     * 获取一个值的类型字符串[object type]
+     *
+     * @private
+     * @param {*} value 需要返回类型的值
+     * @returns {string} 返回类型字符串
+     */
+    function getType$1 (value) {
+        if (value == null) {
+            return value === undefined ? '[object Undefined]' : '[object Null]';
+        }
+        return toString$1.call(value);
+    }
+
+    /**
+     * 判断一个值是不是String。
+     *
+     * @since V0.1.2
+     * @public
+     * @param {*} value 需要判断类型的值
+     * @returns {boolean} 如果是String返回true，否则返回false
+     */
+    function isString$1 (value) {
+        const type = typeof value;
+        return type === 'string' || (type === 'object' && value != null && !Array.isArray(value) && getType$1(value) === '[object String]');
+    }
+
+    /**
+     * 和isArrayLike类似，不过特别排除以下类型：
+     *  1.字符串
+     *
+     * @private
+     * @param {any} value 需要判断的值
+     * @returns {boolean} 如果是返回true，否则返回false
+     */
+
+    function isArraySpec (value) {
+
+        return isArrayLike(value) && !isString$1(value);
+
+    }
+
+    /**
+     * 判断一个值是不是数组。
+     *
+     * @since V0.3.1
+     * @public
+     * @param {*} value 需要判断类型的值
+     * @param {boolean} notStrict 是否不严格检查类型（默认false，如果为true表示判断是不是一个类似数组的类型）
+     * @returns {boolean} 如果是数组返回true，否则返回false
+     */
+    function isArray (value, notStrict) {
+        if (notStrict) {
+            return isArraySpec(value);
+        }
+        return Array.isArray(value);
+    }
+
     /**
      * =========================================
      * 本文件用于提供一些零碎的方法
@@ -265,6 +357,25 @@
      */
     function replaceDom(oldEl, newEl) {
         oldEl.parentNode.replaceChild(newEl, oldEl);
+    }
+    /**
+     * 绑定事件
+     * @param {DOM} dom 
+     * @param {string|array<string>} eventTypes 
+     * @param {function} callback 
+     */
+    function bindEvent(dom, eventTypes, callback) {
+
+        if (!isArray(eventTypes)) eventTypes = [eventTypes];
+
+        for (let i = 0; i < eventTypes.length; i++) {
+            if (window.attachEvent) {
+                dom.attachEvent("on" + eventTypes[i], callback); // 后绑定的先执行
+            } else {
+                dom.addEventListener(eventTypes[i], callback, false);// 捕获
+            }
+        }
+
     }
 
     /**
@@ -962,27 +1073,16 @@
       update
     };
 
-    function createCommonjsModule(fn, module) {
-    	return module = { exports: {} }, fn(module, module.exports), module.exports;
-    }
-
-    var xhtml_min = createCommonjsModule(function (module) {
-    function isNativeReflectConstruct(){if(typeof Reflect==="undefined"||!Reflect.construct)return false;if(Reflect.construct.sham)return false;if(typeof Proxy==="function")return true;try{Date.prototype.toString.call(Reflect.construct(Date,[],function(){}));return true}catch(e){return false}}function _construct(Parent,args,Class){if(isNativeReflectConstruct()){_construct=Reflect.construct;}else {_construct=function _construct(Parent,args,Class){var a=[null];a.push.apply(a,args);var Constructor=Function.bind.apply(Parent,a);var instance=new Constructor;if(Class)_setPrototypeOf(instance,Class.prototype);return instance};}return _construct.apply(null,arguments)}function _setPrototypeOf(o,p){_setPrototypeOf=Object.setPrototypeOf||function _setPrototypeOf(o,p){o.__proto__=p;return o};return _setPrototypeOf(o,p)}function _toConsumableArray(arr){return _arrayWithoutHoles(arr)||_iterableToArray(arr)||_nonIterableSpread()}function _nonIterableSpread(){throw new TypeError("Invalid attempt to spread non-iterable instance")}function _iterableToArray(iter){if(Symbol.iterator in Object(iter)||Object.prototype.toString.call(iter)==="[object Arguments]")return Array.from(iter)}function _arrayWithoutHoles(arr){if(Array.isArray(arr)){for(var i=0,arr2=new Array(arr.length);i<arr.length;i++){arr2[i]=arr[i];}return arr2}}function _typeof(obj){if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){_typeof=function _typeof(obj){return typeof obj};}else {_typeof=function _typeof(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj};}return _typeof(obj)}(function(){var MAX_SAFE_INTEGER=9007199254740991;function isLength(value){return typeof value=="number"&&value>-1&&value%1==0&&value<=MAX_SAFE_INTEGER}function isArrayLike(value){return value!=null&&typeof value!="function"&&isLength(value.length)}var toString=Object.prototype.toString;function getType(value){if(value==null){return value===undefined?"[object Undefined]":"[object Null]"}return toString.call(value)}function isString(value){var type=_typeof(value);return type==="string"||type==="object"&&value!=null&&!Array.isArray(value)&&getType(value)==="[object String]"}function isArraySpec(value){return isArrayLike(value)&&!isString(value)}var concat=function concat(newArray,values){for(var i=0;i<values.length;i++){if(isArraySpec(values[i])){if(values[i].length>1){concat(newArray,values[i]);}else if(values[i].length===1){newArray.push(values[i][0]);}}else {newArray.push(values[i]);}}};function concat$1(){var newArray=[];for(var _len=arguments.length,values=new Array(_len),_key=0;_key<_len;_key++){values[_key]=arguments[_key];}concat(newArray,values);return newArray}function isPlainObject(value){if(value===null||_typeof(value)!=="object"||getType(value)!="[object Object]"){return false}if(Object.getPrototypeOf(value)===null){return true}var proto=value;while(Object.getPrototypeOf(proto)!==null){proto=Object.getPrototypeOf(proto);}return Object.getPrototypeOf(value)===proto}function isElement(value){return value!==null&&_typeof(value)==="object"&&(value.nodeType===1||value.nodeType===9||value.nodeType===11)&&!isPlainObject(value)}function isObject(value){var type=_typeof(value);return value!=null&&(type==="object"||type==="function")}var xhtml=function xhtml(){for(var _len2=arguments.length,nodes=new Array(_len2),_key2=0;_key2<_len2;_key2++){nodes[_key2]=arguments[_key2];}return new xhtml.prototype.init(nodes)};xhtml.prototype.init=function(nodes){nodes=concat$1.apply(void 0,_toConsumableArray(nodes));this.length=0;for(var i=0;i<nodes.length;i++){if(isElement(nodes[i])){this[this.length]=nodes[i];this.length+=1;}}return this};xhtml.prototype.extend=xhtml.extend=function(){var target=arguments[0]||{};var source=arguments[1]||{};var length=arguments.length;if(length===1){source=target;target=this;}if(!isObject(target)){target={};}for(var key in source){try{target[key]=source[key];}catch(e){throw new Error("Illegal property value！")}}return target};xhtml.prototype.init.prototype=xhtml.prototype;var toNode=function toNode(template){var frame=document.createElement("div");frame.innerHTML=template;var childNodes=frame.childNodes;for(var i=0;i<childNodes.length;i++){if(isElement(childNodes[i])){return childNodes[i]}}return null};function toNode$1(template){if(isElement(template)){return template}else if(isString(template)){return toNode(template)}else {throw new Error("Illegal template!")}}function isFunction(value){if(!isObject(value)){return false}var type=getType(value);return type==="[object Function]"||type==="[object AsyncFunction]"||type==="[object GeneratorFunction]"||type==="[object Proxy]"}function append(node){if(this.length>0){this[0].appendChild(toNode$1(node));}return this}function prepend(node){if(this.length>0){this[0].insertBefore(toNode$1(node),this[0].childNodes[0]);}return this}function after(node){if(this.length>0){this[0].parentNode.insertBefore(toNode$1(node),this[0].nextSibling);}return this}function before(node){if(this.length>0){this[0].parentNode.insertBefore(toNode$1(node),this[0]);}return this}function find(tagName,checkback){if(isFunction(tagName)||arguments.length<1){checkback=tagName;tagName="*";}var nodes=this[0].getElementsByTagName(tagName);if(!isFunction(checkback)){return this["new"](nodes)}var xhtmlObj=this["new"]();for(var i=0;i<nodes.length;i++){if(checkback(nodes[i])){xhtmlObj[xhtmlObj.length++]=nodes[i];}}return xhtmlObj}function parents(checkback,stopback){var nodes=[],node=this[0].parentNode;while(isElement(node)){if(!isFunction(checkback)||checkback(node)){nodes.push(node);}if(isFunction(stopback)&&stopback(node)){break}node=node.parentNode;}return this["new"](nodes)}function children(checkback){var nodes=this[0].childNodes,xhtmlObj=this["new"]();for(var i=0;i<nodes.length;i++){if(isElement(nodes[i])&&(!isFunction(checkback)||checkback(nodes[i]))){xhtmlObj[xhtmlObj.length++]=nodes[i];}}return xhtmlObj}function eq(index){var xhtmlObj=this["new"]();if(this.length>index){xhtmlObj[0]=this[index];xhtmlObj.length=1;}return xhtmlObj}function remove(){for(var i=0;i<this.length;i++){this[i].parentNode.removeChild(this[i]);}return this}var classHelper={has:function has(targetClass,checkClass){targetClass=" "+targetClass+" ";checkClass=" "+checkClass.trim()+" ";return targetClass.indexOf(checkClass)>-1},delete:function _delete(targetClass,checkClass){targetClass=" "+targetClass+" ";checkClass=" "+checkClass.trim()+" ";while(targetClass.indexOf(checkClass)>-1){targetClass=targetClass.replace(checkClass," ");}return targetClass.trim().replace(/ +/g," ")}};function attr(attr,val){if(arguments.length<2){return this.length>0?this[0].getAttribute(attr):undefined}for(var i=0;i<this.length;i++){this[i].setAttribute(attr,val);}return this}function hasClass(clazz){var oldClazz=this[0].getAttribute("class");return classHelper.has(oldClazz,clazz)}function removeClass(clazz){var oldClazz=this[0].getAttribute("class");var newClazz=classHelper["delete"](oldClazz,clazz);this[0].setAttribute("class",newClazz);return this}function addClass(clazz){var oldClazz=this[0].getAttribute("class");if(!classHelper.has(oldClazz,clazz)){this[0].setAttribute("class",oldClazz+" "+clazz);}return this}function toggerClass(clazz){var oldClazz=this[0].getAttribute("class");if(classHelper.has(oldClazz,clazz)){var newClazz=classHelper["delete"](oldClazz,clazz);this[0].setAttribute("class",newClazz);}else {this[0].setAttribute("class",oldClazz+" "+clazz);}return this}function getStyle(dom,name){var allStyle=document.defaultView&&document.defaultView.getComputedStyle?document.defaultView.getComputedStyle(dom,null):dom.currentStyle;return typeof name==="string"?allStyle.getPropertyValue(name):allStyle}function css(){if(arguments.length<=1&&(arguments.length<=0||_typeof(arguments[0])!=="object")){if(this.length<=0)return;return getStyle(this[0],arguments[0])}for(var i=0;i<this.length;i++){if(arguments.length===1){for(var key in arguments[0]){this[i].style[key]=arguments[0][key];}}else this[i].style[arguments[0]]=arguments[1];}return this}function stopPropagation(event){event=event||window.event;if(event.stopPropagation){event.stopPropagation();}else {event.cancelBubble=true;}}function preventDefault(event){event=event||window.event;if(event.preventDefault){event.preventDefault();}else {event.returnValue=false;}}function bind(eventType,callback){if(window.attachEvent){for(var i=0;i<this.length;i++){this[i].attachEvent("on"+eventType,callback);}}else {for(var _i=0;_i<this.length;_i++){this[_i].addEventListener(eventType,callback,false);}}return this}function unbind(eventType,handler){if(window.detachEvent){for(var i=0;i<this.length;i++){this[i].detachEvent("on"+eventType,handler);}}else {for(var _i2=0;_i2<this.length;_i2++){this[_i2].removeEventListener(eventType,handler,false);}}return this}function trigger(eventType){var i,event;if(document.createEventObject){event=document.createEventObject();for(i=0;i<this.length;i++){this[i].fireEvent("on"+eventType,event);}}else {event=document.createEvent("HTMLEvents");event.initEvent(eventType,true,false);for(i=0;i<this.length;i++){this[i].dispatchEvent(event);}}return this}function size(type){var dom=this[0],elemHeight,elemWidth;if(type=="content"){elemWidth=dom.clientWidth-(getStyle(dom,"padding-left")+"").replace("px","")-(getStyle(dom,"padding-right")+"").replace("px","");elemHeight=dom.clientHeight-(getStyle(dom,"padding-top")+"").replace("px","")-(getStyle(dom,"padding-bottom")+"").replace("px","");}else if(type=="padding"){elemWidth=dom.clientWidth;elemHeight=dom.clientHeight;}else if(type=="border"){elemWidth=dom.offsetWidth;elemHeight=dom.offsetHeight;}else if(type=="scroll"){elemWidth=dom.scrollWidth;elemHeight=dom.scrollHeight;}else {elemWidth=dom.offsetWidth;elemHeight=dom.offsetHeight;}return {width:elemWidth,height:elemHeight}}function mousePosition(event){var bounding=this[0].getBoundingClientRect();if(!event||!event.clientX)throw new Error("Event is necessary!");return {x:event.clientX-bounding.left,y:event.clientY-bounding.top}}function offsetPosition(){var left=0,top=0,dom=this[0];top=dom.offsetTop;left=dom.offsetLeft;dom=dom.offsetParent;while(dom){top+=dom.offsetTop;left+=dom.offsetLeft;dom=dom.offsetParent;}return {left:left,top:top}}xhtml.prototype.extend({append:append,prepend:prepend,after:after,before:before,find:find,parents:parents,children:children,eq:eq,remove:remove,attr:attr,css:css,hasClass:hasClass,addClass:addClass,removeClass:removeClass,toggerClass:toggerClass,bind:bind,unbind:unbind,trigger:trigger,size:size,mousePosition:mousePosition,offsetPosition:offsetPosition});xhtml.extend({stopPropagation:stopPropagation,preventDefault:preventDefault});xhtml.prototype["new"]=function(){for(var _len3=arguments.length,nodes=new Array(_len3),_key3=0;_key3<_len3;_key3++){nodes[_key3]=arguments[_key3];}return _construct(xhtml,nodes)};if((_typeof(module))==="object"&&_typeof(module.exports)==="object"){module.exports=xhtml;}else {var _xhtml=window.xhtml;xhtml.noConflict=function(deep){window.xhtml=_xhtml;return xhtml};window.xhtml=xhtml;}})();
-    });
-
     var iOn = {
       inserted: function (el, binding) {
 
         let types = binding.type.split('.');
 
-        xhtml_min(el).bind(types[0], function () {
+        bindEvent(el, types[0], function () {
+
           alert('test');
+
         });
-      },
-      delete: function (el, binding) {
-
-        console.log(el, binding);
-
       }
     };
 
@@ -1096,7 +1196,7 @@
     var iModel = {
       inserted: function (el, binding) {
         el.value = binding.value;
-        xhtml_min(el).bind('input', () => {
+        bindEvent(el, ['input', 'change'], () => {
           set(binding.target, binding.exp, el.value);
         });
 

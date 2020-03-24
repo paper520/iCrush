@@ -4,6 +4,7 @@
  */
 
 import isElement from '@yelloxing/core.js/isElement';
+import isArray from '@yelloxing/core.js/isArray';
 
 /**
  * 获取结点的outHTML
@@ -94,4 +95,24 @@ export function templateToName(tagName) {
  */
 export function replaceDom(oldEl, newEl) {
     oldEl.parentNode.replaceChild(newEl, oldEl);
+};
+
+/**
+ * 绑定事件
+ * @param {DOM} dom 
+ * @param {string|array<string>} eventTypes 
+ * @param {function} callback 
+ */
+export function bindEvent(dom, eventTypes, callback) {
+
+    if (!isArray(eventTypes)) eventTypes = [eventTypes];
+
+    for (let i = 0; i < eventTypes.length; i++) {
+        if (window.attachEvent) {
+            dom.attachEvent("on" + eventTypes[i], callback); // 后绑定的先执行
+        } else {
+            dom.addEventListener(eventTypes[i], callback, false);// 捕获
+        }
+    }
+
 };
