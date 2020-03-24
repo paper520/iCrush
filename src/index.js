@@ -32,7 +32,7 @@ iCrush.prototype.$$mount = function () {
 
   if (!isFunction(this._options.render)) {
 
-    let template = this.template;
+    let template = this._options.template;
 
     // 如果template没有设置或设置的不是字符串
     if (!template || !isString(template)) {

@@ -9,7 +9,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /*!
-* iCrush v1.0.2-alpha
+* iCrush v1.1.0-alpha
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -1223,7 +1223,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
   iCrush.prototype.$$mount = function () {
     if (!isFunction(this._options.render)) {
-      var template = this.template; // 如果template没有设置或设置的不是字符串
+      var template = this._options.template; // 如果template没有设置或设置的不是字符串
 
       if (!template || !isString(template)) {
         // 直接选择el

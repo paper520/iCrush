@@ -1,5 +1,5 @@
 /*!
-* iCrush v1.0.2-alpha
+* iCrush v1.1.0-alpha
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -1265,7 +1265,7 @@
 
       if (!isFunction(this._options.render)) {
 
-        let template = this.template;
+        let template = this._options.template;
 
         // 如果template没有设置或设置的不是字符串
         if (!template || !isString(template)) {
