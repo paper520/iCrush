@@ -45,6 +45,18 @@ export function initMixin(iCrush) {
             this[key] = this._data[key];
         }
 
+        // 挂载局部组件
+        this.__componentLib_scope = {};
+        for (let key in options.component) {
+            this.__componentLib_scope[key] = options.component[key];
+        }
+
+        // 挂载局部指令
+        this.__directiveLib_scope = {};
+        for (let key in options.directive) {
+            this.__directiveLib_scope[key] = options.directive[key];
+        }
+
     };
 
 };

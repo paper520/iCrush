@@ -4,7 +4,6 @@
  */
 
 import { initMixin } from './init';
-import { eventsMixin } from './events'
 import { lifecycleMixin } from './lifecycle';
 import { renderMixin } from './render';
 import isElement from '@yelloxing/core.js/isElement';
@@ -38,7 +37,6 @@ function iCrush(options) {
  * 下面是混入几大核心功能的处理方法
  */
 initMixin(iCrush);// 初始化对象
-eventsMixin(iCrush);// 处理事件相关
 lifecycleMixin(iCrush);// 和组件的生命周期相关调用
 renderMixin(iCrush);// 组件渲染或更新相关
 

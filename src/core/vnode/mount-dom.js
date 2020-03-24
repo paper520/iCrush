@@ -18,8 +18,8 @@ function mountDom(that, key, pEl, iCrush) {
     // 如果是none，需要提前分类
     if (vnode.type == 'none') {
         let ttc = templateToName(vnode.tagName);
-        if (that.__componentLib[ttc]) {
-            vnode.options = that.__componentLib[ttc];
+        if (that.__componentLib[ttc] || that.__componentLib_scope[ttc]) {
+            vnode.options = that.__componentLib[ttc] || that.__componentLib_scope[ttc];
             vnode.type = 'component';
         } else {
             vnode.type = 'tag';
@@ -36,6 +36,25 @@ function mountDom(that, key, pEl, iCrush) {
         // 这相当于子组件，挂载好了以后，启动即可
         vnode.instance = new iCrush(vnode.options);
         vnode.instance.__parent = that;
+
+        // 记录组件
+        let props = vnode.options.props;
+        let attrs = vnode.attrs;
+        vnode.instance._prop = {};
+        if (props && props.length > 0) {
+            for (let i = 0; props && i < props.length; i++) {
+                vnode.instance._prop[props[i]] = that[attrs[props[i]]];
+            }
+
+            that.__componentTask.push({
+                props: vnode.options.props,
+                attrs,
+                instance: vnode.instance
+            });
+        }
+
+        vnode.instance.$trigger();
+
     }
 
     // 2.普通标签
@@ -60,7 +79,7 @@ function mountDom(that, key, pEl, iCrush) {
         for (let key in vnode.attrs) {
             let value = vnode.attrs[key];
             let names = (key + ":").split(':');
-            let directive = that.__directiveLib[templateToName(names[0])];
+            let directive = that.__directiveLib[templateToName(names[0])] || that.__directiveLib_scope[templateToName(names[0])];
 
             // 如果是指令
             if (directive) {

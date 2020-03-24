@@ -1,5 +1,5 @@
 /*!
-* iCrush v1.0.0-alpha
+* iCrush v1.0.2-alpha
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -26,13 +26,6 @@
         iCrush.component = function (name, options) {
 
             iCrush.prototype.__componentLib[name] = options;
-
-        };
-
-        // 挂载过滤器
-        iCrush.filter = function (name, options) {
-
-            iCrush.prototype.__filterLib[name] = options;
 
         };
 
@@ -363,13 +356,17 @@
                 this[key] = this._data[key];
             }
 
-        };
+            // 挂载局部组件
+            this.__componentLib_scope = {};
+            for (let key in options.component) {
+                this.__componentLib_scope[key] = options.component[key];
+            }
 
-    }
-
-    function eventsMixin(iCrush) {
-
-        iCrush.prototype.$$bindEvent = function (el, key, event) {
+            // 挂载局部指令
+            this.__directiveLib_scope = {};
+            for (let key in options.directive) {
+                this.__directiveLib_scope[key] = options.directive[key];
+            }
 
         };
 
@@ -411,6 +408,13 @@
                 this._options[callbackName].call(this);
             }
 
+        };
+
+        // 触发本组件注册事件
+        iCrush.prototype.$trigger = function () {
+            if (isFunction(this._options.lister)) {
+                this._options.lister.call(this, iCrush);
+            }
         };
 
     }
@@ -669,8 +673,8 @@
         // 如果是none，需要提前分类
         if (vnode.type == 'none') {
             let ttc = templateToName(vnode.tagName);
-            if (that.__componentLib[ttc]) {
-                vnode.options = that.__componentLib[ttc];
+            if (that.__componentLib[ttc] || that.__componentLib_scope[ttc]) {
+                vnode.options = that.__componentLib[ttc] || that.__componentLib_scope[ttc];
                 vnode.type = 'component';
             } else {
                 vnode.type = 'tag';
@@ -687,6 +691,25 @@
             // 这相当于子组件，挂载好了以后，启动即可
             vnode.instance = new iCrush(vnode.options);
             vnode.instance.__parent = that;
+
+            // 记录组件
+            let props = vnode.options.props;
+            let attrs = vnode.attrs;
+            vnode.instance._prop = {};
+            if (props && props.length > 0) {
+                for (let i = 0; props && i < props.length; i++) {
+                    vnode.instance._prop[props[i]] = that[attrs[props[i]]];
+                }
+
+                that.__componentTask.push({
+                    props: vnode.options.props,
+                    attrs,
+                    instance: vnode.instance
+                });
+            }
+
+            vnode.instance.$trigger();
+
         }
 
         // 2.普通标签
@@ -711,7 +734,7 @@
             for (let key in vnode.attrs) {
                 let value = vnode.attrs[key];
                 let names = (key + ":").split(':');
-                let directive = that.__directiveLib[templateToName(names[0])];
+                let directive = that.__directiveLib[templateToName(names[0])] || that.__directiveLib_scope[templateToName(names[0])];
 
                 // 如果是指令
                 if (directive) {
@@ -832,7 +855,6 @@
 
             this.__directiveTask = [];
             this.__componentTask = [];
-            this.__filterTask = [];
             this.__bindTextTask = [];
 
             // 以指令为例，指令在挂载的真实DOM销毁的时候，应该主动销毁自己
@@ -883,6 +905,19 @@
                 let el = document.createTextNode(compilerText(this, bindText.content));
                 replaceDom(bindText.el, el);
                 this.__bindTextTask[i].el = el;
+            }
+
+            // 触发props
+            for (let i = 0; i < this.__componentTask.length; i++) {
+                let component = this.__componentTask[i];
+
+                // 更新props
+                for (let j = 0; j < component.props.length; j++) {
+                    let prop = component.props[j];
+                    component.instance._prop[prop] = this[component.attrs[prop]];
+                }
+
+                component.instance.$trigger();
             }
 
             this.$$lifecycle('updated');
@@ -987,7 +1022,6 @@
      * 下面是混入几大核心功能的处理方法
      */
     initMixin(iCrush);// 初始化对象
-    eventsMixin(iCrush);// 处理事件相关
     lifecycleMixin(iCrush);// 和组件的生命周期相关调用
     renderMixin(iCrush);// 组件渲染或更新相关
 
@@ -1194,9 +1228,22 @@
       }
     };
 
-    var component = {};
+    var component = {
+      props: ['is'],
+      data() {
+        return {};
+      },
+      lister(iCrush) {
+        let options = this._prop.is;
+        options.el = this._el;
 
-    var number = {};
+        // 标记替换而不是追加
+        options.el._nodeName = 'I-CRUSH-COMPONENT';
+
+        // 重定向挂载点
+        this._el = new iCrush(options)._el;
+      }
+    };
 
     /**
      * 备注：
@@ -1212,7 +1259,6 @@
      iCrush.directive('iOn', iOn);
      iCrush.directive('iModel', iModel);
      iCrush.component('component', component);
-     iCrush.filter('number', number);
 
     // 把组件挂载到页面中去
     iCrush.prototype.$$mount = function () {

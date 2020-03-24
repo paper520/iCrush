@@ -20,11 +20,4 @@ export default function (iCrush) {
 
     };
 
-    // 挂载过滤器
-    iCrush.filter = function (name, options) {
-
-        iCrush.prototype.__filterLib[name] = options;
-
-    };
-
 };

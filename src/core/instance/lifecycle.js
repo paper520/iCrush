@@ -38,4 +38,11 @@ export function lifecycleMixin(iCrush) {
 
     };
 
+    // 触发本组件注册事件
+    iCrush.prototype.$trigger = function () {
+        if (isFunction(this._options.lister)) {
+            this._options.lister.call(this, iCrush);
+        }
+    };
+
 };

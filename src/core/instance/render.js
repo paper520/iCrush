@@ -24,7 +24,6 @@ export function renderMixin(iCrush) {
 
         this.__directiveTask = [];
         this.__componentTask = [];
-        this.__filterTask = [];
         this.__bindTextTask = [];
 
         // 以指令为例，指令在挂载的真实DOM销毁的时候，应该主动销毁自己
@@ -75,6 +74,19 @@ export function renderMixin(iCrush) {
             let el = document.createTextNode(compilerText(this, bindText.content));
             replaceDom(bindText.el, el);
             this.__bindTextTask[i].el = el;
+        }
+
+        // 触发props
+        for (let i = 0; i < this.__componentTask.length; i++) {
+            let component = this.__componentTask[i];
+
+            // 更新props
+            for (let j = 0; j < component.props.length; j++) {
+                let prop = component.props[j];
+                component.instance._prop[prop] = this[component.attrs[prop]];
+            }
+
+            component.instance.$trigger();
         }
 
         this.$$lifecycle('updated');

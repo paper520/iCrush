@@ -8,15 +8,32 @@
       <li>2</li>
       <li>3</li>
     </ul>
+
+    <page1 />
+    <hr />
+    <button @click="usePage1()">使用1</button>
+    <component is="page"></component>
   </div>
 </template>
 
 <script>
+  import page1 from './pages/page1.iCrush';
+  import page2 from './pages/page2.iCrush';
   export default {
     data() {
       return {
-        info:"-*-"
+        info: "-*-",
+        page: page2
       };
+    },
+    methods: {
+      usePage1() {
+        console.log('===========');
+        this.page = page1;
+      }
+    },
+    component: {
+      page1
     }
   };
 </script>

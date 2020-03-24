@@ -1,0 +1,8 @@
+<template>
+  <div>page1.iCrush</div>
+</template>
+<script>
+  export default {
+
+  };
+</script>

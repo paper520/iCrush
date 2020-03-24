@@ -9,7 +9,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /*!
-* iCrush v1.0.0-alpha
+* iCrush v1.0.2-alpha
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -31,11 +31,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     iCrush.component = function (name, options) {
       iCrush.prototype.__componentLib[name] = options;
-    }; // 挂载过滤器
-
-
-    iCrush.filter = function (name, options) {
-      iCrush.prototype.__filterLib[name] = options;
     };
   }
 
@@ -379,12 +374,22 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       for (var _key2 in this._data) {
         // 数据的校验在监听的时候进行
         this[_key2] = this._data[_key2];
+      } // 挂载局部组件
+
+
+      this.__componentLib_scope = {};
+
+      for (var _key3 in options.component) {
+        this.__componentLib_scope[_key3] = options.component[_key3];
+      } // 挂载局部指令
+
+
+      this.__directiveLib_scope = {};
+
+      for (var _key4 in options.directive) {
+        this.__directiveLib_scope[_key4] = options.directive[_key4];
       }
     };
-  }
-
-  function eventsMixin(iCrush) {
-    iCrush.prototype.$$bindEvent = function (el, key, event) {};
   }
   /**
    * =========================================
@@ -409,6 +414,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       'beforeUpdate', 'updated', // 销毁组件
       'beforeDestroy', 'destroyed'].indexOf(callbackName) > -1 && isFunction(this._options[callbackName])) {
         this._options[callbackName].call(this);
+      }
+    }; // 触发本组件注册事件
+
+
+    iCrush.prototype.$trigger = function () {
+      if (isFunction(this._options.lister)) {
+        this._options.lister.call(this, iCrush);
       }
     };
   }
@@ -664,8 +676,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     if (vnode.type == 'none') {
       var ttc = templateToName(vnode.tagName);
 
-      if (that.__componentLib[ttc]) {
-        vnode.options = that.__componentLib[ttc];
+      if (that.__componentLib[ttc] || that.__componentLib_scope[ttc]) {
+        vnode.options = that.__componentLib[ttc] || that.__componentLib_scope[ttc];
         vnode.type = 'component';
       } else {
         vnode.type = 'tag';
@@ -679,7 +691,25 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       vnode.options.el = el; // 这相当于子组件，挂载好了以后，启动即可
 
       vnode.instance = new iCrush(vnode.options);
-      vnode.instance.__parent = that;
+      vnode.instance.__parent = that; // 记录组件
+
+      var props = vnode.options.props;
+      var attrs = vnode.attrs;
+      vnode.instance._prop = {};
+
+      if (props && props.length > 0) {
+        for (var i = 0; props && i < props.length; i++) {
+          vnode.instance._prop[props[i]] = that[attrs[props[i]]];
+        }
+
+        that.__componentTask.push({
+          props: vnode.options.props,
+          attrs: attrs,
+          instance: vnode.instance
+        });
+      }
+
+      vnode.instance.$trigger();
     } // 2.普通标签
     else if (vnode.type == 'tag') {
         el = document.createElement(vnode.tagName);
@@ -697,12 +727,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
          */
 
 
-        for (var _key3 in vnode.attrs) {
-          var value = vnode.attrs[_key3];
+        for (var _key5 in vnode.attrs) {
+          var value = vnode.attrs[_key5];
 
-          var names = (_key3 + ":").split(':');
+          var names = (_key5 + ":").split(':');
 
-          var directive = that.__directiveLib[templateToName(names[0])]; // 如果是指令
+          var directive = that.__directiveLib[templateToName(names[0])] || that.__directiveLib_scope[templateToName(names[0])]; // 如果是指令
 
 
           if (directive) {
@@ -714,13 +744,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
             }));
           } // 普通属性的话，直接设置即可
           else {
-              el.setAttribute(_key3, value);
+              el.setAttribute(_key5, value);
             }
         } // 挂载好父亲以后，挂载孩子
 
 
-        for (var i = 0; i < vnode.children.length; i++) {
-          mountDom(that, key + ".children[" + i + "]", el, iCrush);
+        for (var _i = 0; _i < vnode.children.length; _i++) {
+          mountDom(that, key + ".children[" + _i + "]", el, iCrush);
         }
       } // 3.普通文本
       else if (vnode.type == 'text') {
@@ -805,7 +835,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       this._vnode = this.$$render(createElement);
       this.__directiveTask = [];
       this.__componentTask = [];
-      this.__filterTask = [];
       this.__bindTextTask = []; // 以指令为例，指令在挂载的真实DOM销毁的时候，应该主动销毁自己
       // 类似这样的管理应该由指令自己提供
 
@@ -849,11 +878,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       } // 更新{{}}
 
 
-      for (var _i = 0; _i < this.__bindTextTask.length; _i++) {
-        var bindText = this.__bindTextTask[_i];
+      for (var _i2 = 0; _i2 < this.__bindTextTask.length; _i2++) {
+        var bindText = this.__bindTextTask[_i2];
         var el = document.createTextNode(compilerText(this, bindText.content));
         replaceDom(bindText.el, el);
-        this.__bindTextTask[_i].el = el;
+        this.__bindTextTask[_i2].el = el;
+      } // 触发props
+
+
+      for (var _i3 = 0; _i3 < this.__componentTask.length; _i3++) {
+        var _component = this.__componentTask[_i3]; // 更新props
+
+        for (var j = 0; j < _component.props.length; j++) {
+          var prop = _component.props[j];
+          _component.instance._prop[prop] = this[_component.attrs[prop]];
+        }
+
+        _component.instance.$trigger();
       }
 
       this.$$lifecycle('updated');
@@ -907,8 +948,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       var attrs = {};
 
-      for (var _i2 = 0; _i2 < node.attributes.length; _i2++) {
-        attrs[node.attributes[_i2].nodeName] = node.attributes[_i2].nodeValue;
+      for (var _i4 = 0; _i4 < node.attributes.length; _i4++) {
+        attrs[node.attributes[_i4].nodeName] = node.attributes[_i4].nodeValue;
       } // 返回生成的元素
 
 
@@ -949,8 +990,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 
   initMixin(iCrush); // 初始化对象
-
-  eventsMixin(iCrush); // 处理事件相关
 
   lifecycleMixin(iCrush); // 和组件的生命周期相关调用
 
@@ -1153,8 +1192,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       el.value = binding.value;
     }
   };
-  var component = {};
-  var number = {};
+  var component = {
+    props: ['is'],
+    data: function data() {
+      return {};
+    },
+    lister: function lister(iCrush) {
+      var options = this._prop.is;
+      options.el = this._el; // 标记替换而不是追加
+
+      options.el._nodeName = 'I-CRUSH-COMPONENT'; // 重定向挂载点
+
+      this._el = new iCrush(options)._el;
+    }
+  };
   /**
    * 备注：
    * $$开头的表示内部方法，__开头的表示内部资源
@@ -1168,8 +1219,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   iCrush.directive('iBind', iBind);
   iCrush.directive('iOn', iOn);
   iCrush.directive('iModel', iModel);
-  iCrush.component('component', component);
-  iCrush.filter('number', number); // 把组件挂载到页面中去
+  iCrush.component('component', component); // 把组件挂载到页面中去
 
   iCrush.prototype.$$mount = function () {
     if (!isFunction(this._options.render)) {

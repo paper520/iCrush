@@ -20,9 +20,6 @@ import iModel from './module/directive/i-model'; iCrush.directive('iModel', iMod
 // 挂载内置组件
 import component from './module/component/component'; iCrush.component('component', component);
 
-// 挂载内置过滤器
-import number from './module/filter/number'; iCrush.filter('number', number);
-
 import isString from '@yelloxing/core.js/isString';
 import isFunction from '@yelloxing/core.js/isFunction';
 

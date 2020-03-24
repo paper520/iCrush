@@ -15,7 +15,7 @@ module.exports = function loader(source) {
     // 其实就是一个标准的iCrush组件
     let renderStr = tags.script.replace('export default {', 'export default {render:function(createElement){ return ' + renderFactory(tags.template) + "},");
 
-    // console.log(renderStr);
+    console.log(renderStr);
 
     return renderStr;
 };
