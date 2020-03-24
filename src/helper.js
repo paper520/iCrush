@@ -4,7 +4,6 @@
  */
 
 import isElement from '@yelloxing/core.js/isElement';
-import isArray from '@yelloxing/core.js/isArray';
 
 /**
  * 获取结点的outHTML
@@ -56,6 +55,7 @@ export function isValidKey(key) {
  * @return {string} 解析后的字符串
  */
 export function compilerText(target, text) {
+
     let getText = function (str) {
         return eval(str);
     };
@@ -100,19 +100,56 @@ export function replaceDom(oldEl, newEl) {
 /**
  * 绑定事件
  * @param {DOM} dom 
- * @param {string|array<string>} eventTypes 
+ * @param {string} eventType
  * @param {function} callback 
  */
-export function bindEvent(dom, eventTypes, callback) {
+export function bindEvent(dom, eventType, callback) {
 
-    if (!isArray(eventTypes)) eventTypes = [eventTypes];
-
-    for (let i = 0; i < eventTypes.length; i++) {
-        if (window.attachEvent) {
-            dom.attachEvent("on" + eventTypes[i], callback); // 后绑定的先执行
-        } else {
-            dom.addEventListener(eventTypes[i], callback, false);// 捕获
-        }
+    if (window.attachEvent) {
+        dom.attachEvent("on" + eventType, callback); // 后绑定的先执行
+    } else {
+        dom.addEventListener(eventType, callback, false);// 捕获
     }
 
+};
+
+/**
+ * 解除绑定
+ * @param {DOM} dom 
+ * @param {string} eventType
+ * @param {function} handler 
+ */
+export function unbindEvent(dom, eventType, handler) {
+    if (window.detachEvent) {
+        dom.detachEvent("on" + eventType, handler);
+    } else {
+        dom.removeEventListener(eventType, handler, false);// 捕获
+    }
+
+};
+
+/**
+ * 阻止冒泡
+ * @param {event} event 
+ */
+export function stopPropagation(event) {
+    event = event || window.event;
+    if (event.stopPropagation) { //这是其他非IE浏览器
+        event.stopPropagation();
+    } else {
+        event.cancelBubble = true;
+    }
+};
+
+/**
+ * 阻止默认事件
+ * @param {event} event  
+ */
+export function preventDefault(event) {
+    event = event || window.event;
+    if (event.preventDefault) {
+        event.preventDefault();
+    } else {
+        event.returnValue = false;
+    }
 };

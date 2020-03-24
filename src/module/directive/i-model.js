@@ -10,7 +10,7 @@ import set from '@yelloxing/core.js/set';
 export default {
   inserted: function (el, binding) {
     el.value = binding.value;
-    bindEvent(el, ['input', 'change'], () => {
+    bindEvent(el, 'input', () => {
       set(binding.target, binding.exp, el.value);
     });
 

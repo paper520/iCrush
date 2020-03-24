@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="../dist/iCrush.babel.js"></script>
+    <title>事件 | iCrush单一测试</title>
+    <link rel="shortcut icon" href="../logo.png">
+</head>
+
+<body>
+
+    <div id='root'>
+        flag={{flag}}
+        <hr />
+        <input i-model='flag' />
+        <hr />
+        <ul @click='doit2'>
+            <li @click='doit(flag,"fdd")'>点击</li>
+            <li @click.once='doit(flag,1)'>点击一次</li>
+            <li @click.stop='doit(flag,1)'>阻止冒泡</li>
+        </ul>
+    </div>
+    <script>
+        window.icrush = new iCrush({
+            el: document.getElementById('root'),
+            data: function () {
+                return {
+                    flag: "init"
+                };
+            },
+            methods: {
+                doit: function (value1, value2) {
+                    // alert("=>" + value1 + "--" + value2);
+                    // console.log(this.flag);
+                    console.log(typeof value1, value1, typeof value2, value2);
+                },
+                doit2: function () {
+                    console.warn('冒泡了');
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

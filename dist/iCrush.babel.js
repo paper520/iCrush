@@ -181,95 +181,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   function isElement(value) {
     return value !== null && _typeof(value) === 'object' && (value.nodeType === 1 || value.nodeType === 9 || value.nodeType === 11) && !isPlainObject(value);
   }
-
-  var MAX_SAFE_INTEGER = 9007199254740991;
-  /**
-   * 判断是不是一个可以作为长度的整数（比如数组下标）
-   *
-   * @private
-   * @param {any} value 需要判断的值
-   * @returns {boolean} 如果是返回true，否则返回false
-   */
-
-  function isLength(value) {
-    return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-  }
-  /**
-   * 判断是不是一个类似数组的对象，是否可以通过length迭代
-   *
-   *
-   * @private
-   * @param {any} value 需要判断的值
-   * @returns {boolean} 如果是返回true，否则返回false
-   */
-
-
-  function isArrayLike(value) {
-    return value != null && typeof value != 'function' && isLength(value.length);
-  }
-
-  var toString$1 = Object.prototype.toString;
-  /**
-   * 获取一个值的类型字符串[object type]
-   *
-   * @private
-   * @param {*} value 需要返回类型的值
-   * @returns {string} 返回类型字符串
-   */
-
-  function getType$1(value) {
-    if (value == null) {
-      return value === undefined ? '[object Undefined]' : '[object Null]';
-    }
-
-    return toString$1.call(value);
-  }
-  /**
-   * 判断一个值是不是String。
-   *
-   * @since V0.1.2
-   * @public
-   * @param {*} value 需要判断类型的值
-   * @returns {boolean} 如果是String返回true，否则返回false
-   */
-
-
-  function isString$1(value) {
-    var type = _typeof(value);
-
-    return type === 'string' || type === 'object' && value != null && !Array.isArray(value) && getType$1(value) === '[object String]';
-  }
-  /**
-   * 和isArrayLike类似，不过特别排除以下类型：
-   *  1.字符串
-   *
-   * @private
-   * @param {any} value 需要判断的值
-   * @returns {boolean} 如果是返回true，否则返回false
-   */
-
-
-  function isArraySpec(value) {
-    return isArrayLike(value) && !isString$1(value);
-  }
-  /**
-   * 判断一个值是不是数组。
-   *
-   * @since V0.3.1
-   * @public
-   * @param {*} value 需要判断类型的值
-   * @param {boolean} notStrict 是否不严格检查类型（默认false，如果为true表示判断是不是一个类似数组的类型）
-   * @returns {boolean} 如果是数组返回true，否则返回false
-   */
-
-
-  function isArray(value, notStrict) {
-    if (notStrict) {
-      return isArraySpec(value);
-    }
-
-    return Array.isArray(value);
-  }
   /**
    * =========================================
    * 本文件用于提供一些零碎的方法
@@ -376,20 +287,62 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   /**
    * 绑定事件
    * @param {DOM} dom 
-   * @param {string|array<string>} eventTypes 
+   * @param {string} eventType
    * @param {function} callback 
    */
 
 
-  function bindEvent(dom, eventTypes, callback) {
-    if (!isArray(eventTypes)) eventTypes = [eventTypes];
+  function bindEvent(dom, eventType, callback) {
+    if (window.attachEvent) {
+      dom.attachEvent("on" + eventType, callback); // 后绑定的先执行
+    } else {
+      dom.addEventListener(eventType, callback, false); // 捕获
+    }
+  }
+  /**
+   * 解除绑定
+   * @param {DOM} dom 
+   * @param {string} eventType
+   * @param {function} handler 
+   */
 
-    for (var i = 0; i < eventTypes.length; i++) {
-      if (window.attachEvent) {
-        dom.attachEvent("on" + eventTypes[i], callback); // 后绑定的先执行
-      } else {
-        dom.addEventListener(eventTypes[i], callback, false); // 捕获
-      }
+
+  function unbindEvent(dom, eventType, handler) {
+    if (window.detachEvent) {
+      dom.detachEvent("on" + eventType, handler);
+    } else {
+      dom.removeEventListener(eventType, handler, false); // 捕获
+    }
+  }
+  /**
+   * 阻止冒泡
+   * @param {event} event 
+   */
+
+
+  function stopPropagation(event) {
+    event = event || window.event;
+
+    if (event.stopPropagation) {
+      //这是其他非IE浏览器
+      event.stopPropagation();
+    } else {
+      event.cancelBubble = true;
+    }
+  }
+  /**
+   * 阻止默认事件
+   * @param {event} event  
+   */
+
+
+  function preventDefault(event) {
+    event = event || window.event;
+
+    if (event.preventDefault) {
+      event.preventDefault();
+    } else {
+      event.returnValue = false;
     }
   }
   /**
@@ -1023,12 +976,62 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     inserted: update,
     update: update
   };
+  /**
+   * [可以使用的修饰符]
+   * .prevent 阻止默认事件
+   * .stop    阻止冒泡
+   * .once    只执行一次
+   */
+
   var iOn = {
     inserted: function inserted(el, binding) {
-      var types = binding.type.split('.');
-      bindEvent(el, types[0], function () {
-        alert('test');
-      });
+      var types = binding.type.split('.'),
+          modifier = {
+        "prevent": false,
+        "stop": false,
+        "once": false
+      },
+          callback = function callback(event) {
+        if (modifier.stop) stopPropagation(event);
+        if (modifier.prevent) preventDefault(event);
+        var exps = /^([^(]+)(\([^)]{0,}\)){0,1}/.exec(binding.exp),
+            params = [],
+            oralParams = [];
+
+        if (exps[2]) {
+          // 获取原始的数据
+          var temp = exps[2].replace(/^\(/, '').replace(/\)$/, '').trim();
+
+          if (temp.length > 0) {
+            oralParams = temp.split(',');
+          }
+        } // 解析
+
+
+        for (var i = 0; i < oralParams.length; i++) {
+          var param = oralParams[i];
+
+          if (!/^\d/.test(param) && "true" != param && "false" != param && "NAN" != param && !/["']/.test(param)) {
+            param = compilerText(binding.target, "this." + param);
+          } else {
+            param = compilerText(binding.target, param);
+          }
+
+          params.push(param);
+        }
+
+        binding.target[exps[1]].apply(binding.target, params);
+
+        if (modifier.once) {
+          unbindEvent(el, types[0], callback);
+        }
+      };
+
+      for (var i = 1; i < types.length; i++) {
+        modifier[types[i]] = true;
+      }
+
+      bindEvent(el, types[0], callback);
     }
   };
   /**
@@ -1142,7 +1145,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   var iModel = {
     inserted: function inserted(el, binding) {
       el.value = binding.value;
-      bindEvent(el, ['input', 'change'], function () {
+      bindEvent(el, 'input', function () {
         set(binding.target, binding.exp, el.value);
       });
     },
