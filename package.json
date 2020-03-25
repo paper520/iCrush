@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/yelloxing/iCrush/issues"
   },
-  "homepage": "https://github.com/yelloxing/iCrush#readme",
+  "homepage": "https://github.com/yelloxing/iCrush/blob/master/docs/index.md",
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",

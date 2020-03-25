@@ -1,4 +1,4 @@
-# iCrush 📚 一个渐进型的前端小框架
+# [iCrush](https://github.com/yelloxing/iCrush) 📚 一个渐进型的前端小框架
 (用于前端框架源码等相关技术学习)
 
 > v1版本研发中，敬请期待，也欢迎你的加入，你可以[点击此处](https://github.com/yelloxing/iCrush/tree/version-0.1)查看v0.1版本！
@@ -10,7 +10,7 @@
 ## Issues
 使用的时候遇到任何问题或有好的建议，请点击进入[issue](https://github.com/yelloxing/iCrush/issues)！
 
-你可以[点击查阅文档](https://github.com/yelloxing/iCrush/blob/master/docs/index.md)获得接口API和入门教程，当然我们还有许多[测试用例](https://github.com/yelloxing/iCrush/tree/master/examples)可供参考，里面会提供各种用法并添加好备注。
+你可以[查阅文档](https://github.com/yelloxing/iCrush/blob/master/docs/index.md)获得接口API和入门教程。
 
 ## How to use?
 
@@ -66,7 +66,7 @@ window.icrush = new iCrush({
 </style>
 ```
 
-当然，除了.iCrush的方式外，你也可以通过iCrush.component()定义组件或者别的方法添加更多有用的扩展，更多细节请[点击查阅文档](https://github.com/yelloxing/iCrush/blob/master/docs/index.md)获得帮助。
+更多细节请[查阅文档](https://github.com/yelloxing/iCrush/blob/master/docs/index.md)获得帮助。
 
 ## License
 

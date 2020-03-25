@@ -1,53 +1,21 @@
 <template>
   <div>
-    <label for=''>测试</label>
-    <input class='itc' id='itd' i-model='info' />
-    文本{{info}}
-    <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-    </ul>
-
-    <page1 />
-    <hr />
-    <button @click="usePage2()">使用2</button>
-    <component is="page"></component>
+    {{info}}
+    <button @click='show'>点击查看</button>
   </div>
 </template>
 
 <script>
-  import page1 from './pages/page1.iCrush';
-  /* import page2 from './pages/page2.iCrush';*/
-
-  import pages from "./lazy-load";
-
-  let page2 = null;
-  pages.page2().then(function (callback) {
-    page2 = callback.default;
-  });
-
   export default {
     data() {
       return {
-        info: "-*-",
-        page: page1
+        info: "webpack 例子"
       };
     },
     methods: {
-      usePage2() {
-        console.log('===========');
-        this.page = page2;
+      show() {
+        alert("这是一个" + this.info);
       }
-    },
-    component: {
-      page1
     }
   };
 </script>
-
-<style>
-  label {
-    color: red;
-  }
-</style>

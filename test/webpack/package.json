@@ -1,7 +1,7 @@
 {
-  "name": "icrush-example",
+  "name": "icrush-test",
   "version": "0.1.0",
-  "description": "📚 一个简单的iCrush例子",
+  "description": "📚 一个简单的iCrush使用测试或例子",
   "scripts": {
     "start": "npm install && npm run dev",
     "dev": "node_modules/.bin/webpack-dev-server --config webpack.dev.js",
@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "@yelloxing/normalize.css": "^0.2.0",
-    "icrush": "^1.1.0-alpha",
     "image2d": "^1.6.5"
   }
 }
