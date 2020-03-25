@@ -9,7 +9,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /*!
-* iCrush v1.1.0-alpha
+* iCrush v1.2.0-beta
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */

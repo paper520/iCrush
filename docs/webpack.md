@@ -1,4 +1,4 @@
-# [iCrush](https://github.com/yelloxing/iCrush) 📚 一个渐进型的前端小框架
+# [iCrush](https://github.com/yelloxing/iCrush) 📚 如何基于webpack使用iCrush开发项目？
 
 > 为了方便你的查阅，你可以对照[webpack基本架子](https://github.com/yelloxing/iCrush/tree/master/examples/webpack)来查看。
 

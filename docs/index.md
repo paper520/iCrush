@@ -2,7 +2,9 @@
 
 iCrush可以理解为一个比较复杂的库或一个简单的视图管理框架，这非常表明他非常容易，跟着下面的内容去学习使用会很快上手：
 
+- [快速开始使用iCrush构建自己的项目](./startUp.md)
 - [如何基于webpack使用iCrush开发项目？](./webpack.md)
+- [使用指令强化标签属性](./directive.md)
 
 或许你还可以通过[查看 README](https://github.com/yelloxing/iCrush#readme)来获得最新资讯，当然，在使用过程中有任何问题都可以[提Issue](https://github.com/yelloxing/iCrush/issues)来告诉我们！
 
