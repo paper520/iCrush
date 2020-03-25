@@ -57,13 +57,9 @@ window.icrush = new iCrush({
 
 <script>
   export default {
-    // 类似控制器的地方
+    /*类似控制器的地方*/
   };
 </script>
-
-<style>
-  /* 开启scope，不能控制子组件样式 */
-</style>
 ```
 
 更多细节请[查阅文档](https://github.com/yelloxing/iCrush/blob/master/docs/index.md)获得帮助。

@@ -1,4 +1,3 @@
-const path = require("path");
 const iCrushLoaderPlugin = require('icrush/webpack/icrush-loader-plugin');
 
 module.exports = {
