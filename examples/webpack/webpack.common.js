@@ -1,5 +1,3 @@
-const iCrushLoaderPlugin = require('icrush/webpack/icrush-loader-plugin');
-
 module.exports = {
   entry: ['./src/entry.js'],
   output: {
@@ -27,10 +25,7 @@ module.exports = {
       }]
     }, {
       test: /\.css$/,
-      use: ['style-loader', 'icrush/webpack/icrush-style-loader.js', 'css-loader', 'postcss-loader']
+      use: ['style-loader', 'css-loader', 'postcss-loader']
     }]
-  },
-  plugins: [
-    new iCrushLoaderPlugin()
-  ]
+  }
 };
