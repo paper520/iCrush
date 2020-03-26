@@ -66,6 +66,8 @@ render:function(createElement){
 }
 ```
 
+另外，icrush-loader面对.iCrush文件会进行类似的处理，处理后的结果可以[参考这里](https://github.com/yelloxing/iCrush/tree/master/examples/render.js)。
+
 ## 自定义组件
 
 template（或者说render）中可以包含组件来加强原生标签的功能，如何定义一个组件？
