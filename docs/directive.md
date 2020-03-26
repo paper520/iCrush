@@ -1,4 +1,4 @@
-# [iCrush](https://github.com/yelloxing/iCrush) 📚 快速开始使用iCrush构建自己的项目
+# [iCrush](https://github.com/yelloxing/iCrush) 📚 使用指令强化标签属性
 
 组件是强化原生标签，指令是强化原生属性，先来看看内置的指令有哪些：
 
