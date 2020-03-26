@@ -2,12 +2,16 @@
   <div>
     <label for=''>测试</label>
     <input class='itc' id='itd' i-model='info' />
+    <input class='itc' id='itd' i-model='info2' />
     文本{{info}}
     <ul>
       <li>1</li>
       <li>2</li>
       <li>3</li>
     </ul>
+
+    <span i-bind='info'></span>
+    <span i-bind:info='info'></span>
 
     <page1 />
     <hr />
@@ -30,7 +34,8 @@
   export default {
     data() {
       return {
-        info: "-*-",
+        info: "11111111",
+        info2: "2222222222",
         page: page1
       };
     },

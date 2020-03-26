@@ -71,9 +71,10 @@ export function renderMixin(iCrush) {
         // 更新{{}}
         for (let i = 0; i < this.__bindTextTask.length; i++) {
             let bindText = this.__bindTextTask[i];
-            let el = document.createTextNode(compilerText(this, bindText.content));
-            replaceDom(bindText.el, el);
-            this.__bindTextTask[i].el = el;
+            let content = compilerText(this, bindText.content);
+            if (bindText.el.textContent != content) {
+                bindText.el.textContent = content;
+            }
         }
 
         // 触发props

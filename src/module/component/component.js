@@ -1,9 +1,16 @@
 export default {
   props: ['is'],
   data() {
-    return {};
+    return {
+      is: null
+    };
   },
   lister(iCrush) {
+
+    // 如果动态组件没有改变
+    if (this._prop.is == this.is) return;
+    this.is = this._prop.is;
+
     let options = this._prop.is;
     options.el = this._el;
 

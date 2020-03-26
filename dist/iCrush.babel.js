@@ -880,9 +880,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       for (var _i2 = 0; _i2 < this.__bindTextTask.length; _i2++) {
         var bindText = this.__bindTextTask[_i2];
-        var el = document.createTextNode(compilerText(this, bindText.content));
-        replaceDom(bindText.el, el);
-        this.__bindTextTask[_i2].el = el;
+        var content = compilerText(this, bindText.content);
+
+        if (bindText.el.textContent != content) {
+          bindText.el.textContent = content;
+        }
       } // 触发props
 
 
@@ -1004,10 +1006,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   var update = function update(el, binding) {
     // 如果有type表示给属性赋值
     if (isString(binding.type) && binding.type.length > 0) {
-      el.setAttribute(binding.type, binding.value);
+      if (el.getAttribute(binding.type) != binding.value) {
+        el.setAttribute(binding.type, binding.value);
+      }
     } // 否则是设置内容或值
     else {
-        el.value = el.textContent = binding.value;
+        if (el.value != binding.value || el.textContent != binding.value) {
+          el.value = el.textContent = binding.value;
+        }
       }
   };
 
@@ -1195,9 +1201,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
   var component = {
     props: ['is'],
     data: function data() {
-      return {};
+      return {
+        is: null
+      };
     },
     lister: function lister(iCrush) {
+      // 如果动态组件没有改变
+      if (this._prop.is == this.is) return;
+      this.is = this._prop.is;
       var options = this._prop.is;
       options.el = this._el; // 标记替换而不是追加
 
