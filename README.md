@@ -1,8 +1,6 @@
 # [iCrush](https://github.com/yelloxing/iCrush) 📚 一个渐进型的前端小框架
 (用于前端框架源码等相关技术学习)
 
-> v1版本研发中，敬请期待，也欢迎你的加入，你可以[点击此处](https://github.com/yelloxing/iCrush/tree/version-0.1)查看v0.1版本！
-
 <a href="https://yelloxing.github.io/npm-downloads/?interval=7&packages=icrush"><img src="https://img.shields.io/npm/dm/icrush.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/icrush"><img src="https://img.shields.io/npm/v/icrush.svg" alt="Version"></a>
 <a href="https://github.com/yelloxing/icrush/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/icrush.svg" alt="License"></a>
