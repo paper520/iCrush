@@ -1,21 +1,47 @@
 
 // icrush-loader
 
-const renderFactory = require('./renderFactory/index');
-const iCrushLoaderSplit = require('./renderFactory/index').iCrushLoaderSplit;
-
 module.exports = function loader(source) {
+    let code1 = require('./render-html.js')(source, "style");
+    let code2 = require('./render-html.js')(source, "script");
+    let code3 = require('./render-html.js')(source, "template");
+    debugger
 
-    // 把字符串按照标签和普通字符串进行切割，方便后续操作
-    let tags = iCrushLoaderSplit(source);
+    const loaderContext = this;
 
-    // console.log(tags);
+    const {
+        resourcePath,
+        resourceQuery
+    } = loaderContext;
 
-    // 返回最终的结果
-    // 其实就是一个标准的iCrush组件
-    let renderStr = tags.script.replace('export default {', 'export default {render:function(createElement){ return ' + renderFactory(tags.template) + "},");
+    const rawQuery = resourceQuery.slice(1);
 
-    // console.log(renderStr);
+    const incomingQuery = require('querystring').parse(rawQuery);
 
-    return renderStr;
+    if (incomingQuery.type) {
+
+        let code = require('./render-html.js')(source, incomingQuery.type);
+
+        return `export default ${code}`;
+
+    } else {
+        return `
+
+            // 导入js
+            import script from '${resourcePath}?iCrush&type=script&lang=js&';
+            export * from '${resourcePath}?iCrush&type=script&lang=js&';
+
+            // 导入css
+            import * from '${resourcePath}?iCrush&type=style&lang=css&';
+
+            // 导入html
+            import template from '${resourcePath}?iCrush&type=template';
+
+            export default {
+                tempalte,
+                ...script
+            };
+        `;
+    }
+
 };

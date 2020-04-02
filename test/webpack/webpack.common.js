@@ -1,5 +1,4 @@
 const path = require("path");
-const iCrushLoaderPlugin = require('../../webpack/icrush-loader-plugin');
 
 module.exports = {
   entry: ['./src/entry.js'],
@@ -15,7 +14,7 @@ module.exports = {
     }, {
       test: /\.iCrush$/,
       exclude: /node_modules/,
-      loader: ['babel-loader', '../../webpack/icrush-loader.js']
+      loader: ['../../webpack/icrush-loader.js']
     }, {
       test: /\.(png|jpg|jpeg|gif|bmp)$/,
       use: [{
@@ -28,7 +27,7 @@ module.exports = {
       }]
     }, {
       test: /\.css$/,
-      use: ['style-loader', '../../webpack/icrush-style-loader.js', 'css-loader', 'postcss-loader']
+      use: ['style-loader', 'css-loader', 'postcss-loader']
     }]
   },
   resolve: {
@@ -36,8 +35,5 @@ module.exports = {
     alias: {
       "iCrush": path.join(process.cwd(), "../../dist/iCrush.babel.js")
     }
-  },
-  plugins: [
-    new iCrushLoaderPlugin()
-  ]
+  }
 };
