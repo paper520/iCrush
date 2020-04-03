@@ -8,7 +8,7 @@ module.exports = function (template, tagName) {
     }
   };
 
-  for (endIndex = template.length - 1; endIndex - (tagName.length + 3) >= 0; endIndex--) {
+  for (endIndex = template.length; endIndex - (tagName.length + 3) >= 0; endIndex--) {
     if (`</${tagName}>` == template.substr(endIndex - (tagName.length + 3), tagName.length + 3)) {
       break;
     }
