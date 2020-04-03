@@ -11,6 +11,7 @@ const pluginName = 'iCrushLoaderPlugin';
 const namespace = 'icrush-loader';
 
 const RuleSet = require('webpack/lib/RuleSet');
+const qs = require('querystring');
 
 class iCrushLoaderPlugin {
     apply(compiler) {
@@ -37,11 +38,7 @@ class iCrushLoaderPlugin {
         compiler.options.module.rules = [
             ...clonedRules,
             ...rules
-        ]
-
-        // debugger
-
-        // console.log(compiler.options.module.rules);
+        ];
 
     }
 }
@@ -63,9 +60,21 @@ function cloneRule(rawRules) {
 
     for (let i = 0; i < clonedRawRules.length; i++) {
         if (clonedRawRules[i].test.test('XXX.js')) {
-            clonedRawRules[i].test = /\.iCrush\?iCrush&type=script&lang=js&$/;
+
+            // 匹配js
+            clonedRawRules[i].test = resource => true;
+            clonedRawRules[i].resourceQuery = query => {
+                const parsed = qs.parse(query.slice(1));
+                return parsed.iCrush != null && parsed.type == 'script';
+            }
         } else {
-            clonedRawRules[i].test = /\.iCrush\?iCrush&type=style&lang=css&$/;
+
+            // 匹配css
+            clonedRawRules[i].test = resource => true;
+            clonedRawRules[i].resourceQuery = query => {
+                const parsed = qs.parse(query.slice(1));
+                return parsed.iCrush != null && parsed.type == 'style';
+            }
         }
 
         if (require('@yelloxing/core.js').isString(clonedRawRules[i].loader)) {

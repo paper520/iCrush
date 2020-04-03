@@ -15,7 +15,6 @@ module.exports = function (template, tagName) {
   }
 
   if (beginIndex >= endIndex) {
-    if (tagName == 'script') return "export default {};";
     return '';
   }
 

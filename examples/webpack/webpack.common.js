@@ -1,3 +1,5 @@
+const iCrushLoaderPlugin = require('icrush/webpack/icrush-loader-plug');
+
 module.exports = {
   entry: ['./src/entry.js'],
   output: {
@@ -12,10 +14,10 @@ module.exports = {
     }, {
       test: /\.iCrush$/,
       exclude: /node_modules/,
-      loader: ['babel-loader', 'icrush/webpack/icrush-loader.js']
+      loader: ['icrush/webpack/icrush-loader.js']
     }, {
       test: /\.(png|jpg|jpeg|gif|bmp)$/,
-      use: [{
+      loader: [{
         loader: "url-loader",
         options: {
           name: "build/[path][name].[ext]",
@@ -25,7 +27,10 @@ module.exports = {
       }]
     }, {
       test: /\.css$/,
-      use: ['style-loader', 'css-loader', 'postcss-loader']
+      loader: ['style-loader', 'css-loader', 'postcss-loader']
     }]
-  }
+  },
+  plugins: [
+    new iCrushLoaderPlugin()
+  ]
 };

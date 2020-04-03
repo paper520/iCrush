@@ -19,3 +19,11 @@
     }
   };
 </script>
+
+<style>
+  div {
+    color: blue;
+    font-weight: 800;
+    font-size: 40px;
+  }
+</style>
