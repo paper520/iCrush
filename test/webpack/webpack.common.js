@@ -1,4 +1,5 @@
 const path = require("path");
+const iCrushLoaderPlugin = require('../../webpack/icrush-loader-plug');
 
 module.exports = {
   entry: ['./src/entry.js'],
@@ -35,5 +36,8 @@ module.exports = {
     alias: {
       "iCrush": path.join(process.cwd(), "../../dist/iCrush.babel.js")
     }
-  }
+  },
+  plugins: [
+    new iCrushLoaderPlugin()
+  ]
 };
