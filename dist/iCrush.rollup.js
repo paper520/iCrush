@@ -1,5 +1,5 @@
 /*!
-* iCrush v1.3.1
+* iCrush v1.3.2
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -1247,6 +1247,10 @@
 
         // 如果动态组件没有改变
         if (this._prop.is == this.is) return;
+
+        let oldComponent = this._oldComponent;
+        if (oldComponent) oldComponent.$$lifecycle("beforeDestroy");
+
         this.is = this._prop.is;
 
         let options = this._prop.is;
@@ -1256,7 +1260,13 @@
         options.el._nodeName = 'I-CRUSH-COMPONENT';
 
         // 重定向挂载点
-        this._el = new iCrush(options)._el;
+        this._oldComponent = new iCrush(options);
+        this._el = this._oldComponent._el;
+
+        if (oldComponent) {
+          oldComponent.$$lifecycle("destroyed");
+          oldComponent = null;
+        }
       }
     };
 

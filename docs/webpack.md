@@ -36,6 +36,10 @@ icrush-loader用于解析.iCrush文本生成组件导出。
     /*类似控制器的地方*/
   };
 </script>
+
+<style>
+ /*写样式的地方*/
+</style>
 ```
 
 需要注意的是template必须有一个根节点。

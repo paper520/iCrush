@@ -1,5 +1,7 @@
 # [iCrush](https://github.com/yelloxing/iCrush) 📚 一个渐进型的前端小框架
 
+> 特别注意：本项目的主要目的是学习和测试一些框架和打包工具等
+
 <a href="https://yelloxing.github.io/npm-downloads/?interval=7&packages=icrush"><img src="https://img.shields.io/npm/dm/icrush.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/icrush"><img src="https://img.shields.io/npm/v/icrush.svg" alt="Version"></a>
 <a href="https://github.com/yelloxing/icrush/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/icrush.svg" alt="License"></a>
@@ -57,6 +59,10 @@ window.icrush = new iCrush({
     /*类似控制器的地方*/
   };
 </script>
+
+<style>
+ /*写样式的地方*/
+</style>
 ```
 
 更多细节请[查阅文档](https://github.com/yelloxing/iCrush/blob/master/docs/index.md)获得帮助。

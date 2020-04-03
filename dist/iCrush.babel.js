@@ -9,7 +9,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /*!
-* iCrush v1.3.1
+* iCrush v1.3.2
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -1208,13 +1208,21 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     lister: function lister(iCrush) {
       // 如果动态组件没有改变
       if (this._prop.is == this.is) return;
+      var oldComponent = this._oldComponent;
+      if (oldComponent) oldComponent.$$lifecycle("beforeDestroy");
       this.is = this._prop.is;
       var options = this._prop.is;
       options.el = this._el; // 标记替换而不是追加
 
       options.el._nodeName = 'I-CRUSH-COMPONENT'; // 重定向挂载点
 
-      this._el = new iCrush(options)._el;
+      this._oldComponent = new iCrush(options);
+      this._el = this._oldComponent._el;
+
+      if (oldComponent) {
+        oldComponent.$$lifecycle("destroyed");
+        oldComponent = null;
+      }
     }
   };
   /**

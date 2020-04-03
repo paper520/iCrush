@@ -3,6 +3,11 @@
 </template>
 <script>
   export default {
-
+    beforeDestroy(){
+      console.log('page1 beforeDestroy');
+    },
+    destroyed(){
+      console.log('page1 destory');
+    }
   };
 </script>

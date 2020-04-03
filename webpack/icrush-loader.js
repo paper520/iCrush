@@ -23,9 +23,7 @@ module.exports = function loader(source) {
 
         let code = require('./render-html.js')(source, incomingQuery.type);
 
-        if (incomingQuery.type == 'script') {
-            code = code || "export default{}";
-        } else {
+        if (incomingQuery.type != 'script') {
             code = `export default \`${code}\``;
         }
 

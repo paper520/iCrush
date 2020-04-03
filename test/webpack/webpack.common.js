@@ -18,7 +18,7 @@ module.exports = {
       loader: ['../../webpack/icrush-loader.js']
     }, {
       test: /\.(png|jpg|jpeg|gif|bmp)$/,
-      use: [{
+      loader: [{
         loader: "url-loader",
         options: {
           name: "build/[path][name].[ext]",
@@ -28,7 +28,7 @@ module.exports = {
       }]
     }, {
       test: /\.css$/,
-      use: ['style-loader', 'css-loader', 'postcss-loader']
+      loader: ['style-loader', 'css-loader', 'postcss-loader']
     }]
   },
   resolve: {
