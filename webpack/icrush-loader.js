@@ -1,11 +1,10 @@
 
 // icrush-loader
 
+const path = require('path');
+const qs = require('querystring');
+
 module.exports = function loader(source) {
-    let code1 = require('./render-html.js')(source, "style");
-    let code2 = require('./render-html.js')(source, "script");
-    let code3 = require('./render-html.js')(source, "template");
-    debugger
 
     const loaderContext = this;
 
@@ -14,34 +13,39 @@ module.exports = function loader(source) {
         resourceQuery
     } = loaderContext;
 
+    const filename = path.basename(resourcePath)
+
     const rawQuery = resourceQuery.slice(1);
 
-    const incomingQuery = require('querystring').parse(rawQuery);
+    const incomingQuery = qs.parse(rawQuery);
 
     if (incomingQuery.type) {
 
         let code = require('./render-html.js')(source, incomingQuery.type);
 
-        return `export default ${code}`;
+        if (incomingQuery.type == 'script') return code;
+        return `export default \`${code}\``;
 
     } else {
-        return `
+        let exportCode = `
 
             // 导入js
-            import script from '${resourcePath}?iCrush&type=script&lang=js&';
-            export * from '${resourcePath}?iCrush&type=script&lang=js&';
+            import script from './${filename}?iCrush&type=script&lang=js&';
 
             // 导入css
-            import * from '${resourcePath}?iCrush&type=style&lang=css&';
+            import './${filename}?iCrush&type=style&lang=css&';
 
             // 导入html
-            import template from '${resourcePath}?iCrush&type=template';
+            import template from './${filename}?iCrush&type=template';
 
-            export default {
-                tempalte,
-                ...script
-            };
+            script.template=template;
+
+            export default script;
         `;
+
+        // console.log(exportCode);
+
+        return exportCode;
     }
 
 };

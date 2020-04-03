@@ -24,6 +24,8 @@
   import page1 from './pages/page1.iCrush';
   /* import page2 from './pages/page2.iCrush';*/
 
+  console.log(page1);
+
   import pages from "./lazy-load";
 
   let page2 = null;

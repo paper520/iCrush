@@ -1,1 +1,1 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[1],{11:function(n,e,i){"use strict";i.r(e),e.default={render:function(n){return n("div",{},["page2"])}}}}]);
+(window.webpackJsonp=window.webpackJsonp||[]).push([[1],{11:function(n,e,p){"use strict";p.r(e);var a={};a.template="\n  <div>page2</div>\n";e.default=a}}]);
