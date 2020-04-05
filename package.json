@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@yelloxing/core.js": "^0.3.7",
-    "webpack": "^4.42.1"
+    "webpack": "^4.42.1",
+    "xhtml-engine": "^0.1.0"
   }
 }

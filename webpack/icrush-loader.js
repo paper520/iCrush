@@ -34,7 +34,7 @@ module.exports = function loader(source) {
                 code = source;
             }
         } else {
-            code = `export default \`${code}\``;
+            code = `export default \`${require('./renderFactory')(code)}\``;
         }
 
         loaderContext.callback(null, code);
@@ -51,9 +51,10 @@ module.exports = function loader(source) {
             import './${filename}?iCrush&type=style&lang=css&';
 
             // 导入html
-            import template from './${filename}?iCrush&type=template';
+            import render from './${filename}?iCrush&type=template';
 
-            script.template=template;
+            // script.render=render;
+            script.template=render;
 
             export default script;
         `;
