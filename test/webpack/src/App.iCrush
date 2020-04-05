@@ -2,9 +2,7 @@
   <div>
     <label for=''>测试</label>
     <input class='itc' id='itd1' i-model='info' />
-    <input class='itc' id='itd2' i-model='info2' />
-    文本{{info}}
-    <ul>
+    <input class='itc' id='itd2' i-model='info2' />文本{{info}}<ul>
       <li>1</li>
       <li>2</li>
       <li>3</li>

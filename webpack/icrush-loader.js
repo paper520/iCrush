@@ -33,8 +33,6 @@ module.exports = function loader(source) {
             if (code.length <= 0) {
                 code = source;
             }
-        } else {
-            code = `export default \`${require('./renderFactory')(code)}\``;
         }
 
         loaderContext.callback(null, code);
@@ -42,6 +40,10 @@ module.exports = function loader(source) {
         return;
 
     } else {
+
+        let code = require('./render-html.js')(source, 'template');
+        code = require('./renderFactory')(code);
+
         let exportCode = `
 
             // 导入js
@@ -51,15 +53,14 @@ module.exports = function loader(source) {
             import './${filename}?iCrush&type=style&lang=css&';
 
             // 导入html
-            import render from './${filename}?iCrush&type=template';
+            // import template from './${filename}?iCrush&type=template';
 
-            // script.render=render;
-            script.template=render;
+            script.render=${code};
 
             export default script;
         `;
 
-        // console.log(exportCode);
+        console.log(exportCode);
 
         return exportCode;
     }
