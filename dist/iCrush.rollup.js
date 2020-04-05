@@ -1,5 +1,5 @@
 /*!
-* iCrush v1.4.1
+* iCrush v1.5.0
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */

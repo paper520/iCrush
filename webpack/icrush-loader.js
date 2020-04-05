@@ -52,15 +52,12 @@ module.exports = function loader(source) {
             // 导入css
             import './${filename}?iCrush&type=style&lang=css&';
 
-            // 导入html
-            // import template from './${filename}?iCrush&type=template';
-
             script.render=${code};
 
             export default script;
         `;
 
-        console.log(exportCode);
+        // console.log(exportCode);
 
         return exportCode;
     }

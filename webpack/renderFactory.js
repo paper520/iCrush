@@ -4,7 +4,9 @@ module.exports = function (template) {
 
     let value = Engine.valueOf();
     if (require('@yelloxing/core.js').isString(value)) {
-      return "'" + value + "'";
+
+      // 由于回车的问题，非`的字符串不支持，我们需要使用转义替换
+      return "'" + value.replace(/[\n\r]/g, '') + "'";
     } else {
 
       let childrenRender = "[", childrenNode = Engine.children();
