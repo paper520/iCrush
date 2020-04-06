@@ -1,6 +1,6 @@
 # [iCrush](https://github.com/yelloxing/iCrush) 📚 一个渐进型的前端小框架
 
-iCrush可以理解为一个比较复杂的库或一个简单的视图管理框架，这非常表明他非常容易，跟着下面的内容去学习使用会很快上手：
+iCrush可以理解为一个比较复杂的库或一个简单的视图管理框架，这表明他非常容易开始，跟着下面的内容去使用会很快上手：
 
 - [快速开始使用iCrush构建自己的项目](./startUp.md)
 - [如何基于webpack使用iCrush开发项目？](./webpack.md)
