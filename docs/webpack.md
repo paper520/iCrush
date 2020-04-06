@@ -16,7 +16,23 @@ npm install --save icrush
 {
     test: /\.iCrush$/,
     loader: ['icrush/webpack/icrush-loader.js']
+},{
+  {
+    test: /\.css$/,
+    loader: ['style-loader', 'icrush/webpack/icrush-style-loader.js', 'css-loader']
+  }
 }
+```
+
+此外，loader还依赖插件，我们需要引入并使用：
+
+```js
+const iCrushLoaderPlugin = require('icrush/webpack/icrush-loader-plug');
+
+// webpack中使用插件
+plugins: [
+  new iCrushLoaderPlugin()
+]
 ```
 
 icrush-loader用于解析.iCrush文本生成组件导出。
@@ -43,8 +59,6 @@ icrush-loader用于解析.iCrush文本生成组件导出。
 ```
 
 需要注意的是template必须有一个根节点。
-
-【温馨提示】由于项目的版本更新迭代，会越来越多的提供更友好的支持（这里的内容会同步更新），一般情况下，选择最新版本可能是最佳选择，我们会尽力提供向下兼容。
 
 Copyright (c) 2020 走一步 再走一步 
 
