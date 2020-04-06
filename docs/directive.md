@@ -1,4 +1,4 @@
-# [iCrush](https://github.com/yelloxing/iCrush) 📚 如何自定义指令来强化标签属性
+# [iCrush](https://github.com/yelloxing/iCrush) 📚 如何自定义指令来强化标签属性?
 
 组件是强化原生标签，指令是强化原生属性，因此用法和原生属性类似，比如我们有一个属性name：
 
