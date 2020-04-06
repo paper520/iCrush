@@ -16,10 +16,26 @@ npm install --save icrush
 {
     test: /\.iCrush$/,
     loader: ['icrush/webpack/icrush-loader.js']
+},{
+  {
+    test: /\.css$/,
+    loader: ['style-loader', 'icrush/webpack/icrush-style-loader.js', 'css-loader']
+  }
 }
 ```
 
-icrush-loader用于解析.iCrush文本生成组件的options导出。
+此外，loader还依赖插件，我们需要引入并使用：
+
+```js
+const iCrushLoaderPlugin = require('icrush/webpack/icrush-loader-plug');
+
+// webpack中使用插件
+plugins: [
+  new iCrushLoaderPlugin()
+]
+```
+
+icrush-loader用于解析.iCrush文本生成组件导出。
 
 这样你就可以把一个.iCrush文件看成一个组件，直接使用import或别的方式引入来拼接成完整的页面即可，其余的和非webpack项目一样。
 
@@ -36,16 +52,13 @@ icrush-loader用于解析.iCrush文本生成组件的options导出。
     /*类似控制器的地方*/
   };
 </script>
+
+<style>
+ /*写样式的地方，所有的样式只会对当前的组件有效*/
+</style>
 ```
 
-需要注意的是template必须有一个根节点，并且只支持下列类型的标签：
-
-- &lt;tagName /&gt;
-- &lt;tagName&gt;&lt;/tagName&gt;
-
-而在script中我们只支持“/* 注释内容 */”这种方式的注释。
-
-【温馨提示】由于项目的版本更新迭代，会越来越多的提供更友好的支持（这里的内容会同步更新），一般情况下，选择最新版本可能是最佳选择，我们会尽力提供向下兼容。
+需要注意的是template必须有一个根节点。
 
 Copyright (c) 2020 走一步 再走一步 
 

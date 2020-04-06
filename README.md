@@ -1,5 +1,6 @@
 # [iCrush](https://github.com/yelloxing/iCrush) 📚 一个渐进型的前端小框架
-(用于前端框架源码等相关技术学习)
+
+> 把字符串模板解析成render函数依赖一个专门解析xhtml的库：[xhtml-engine](https://github.com/yelloxing/xhtml-engine)
 
 <a href="https://yelloxing.github.io/npm-downloads/?interval=7&packages=icrush"><img src="https://img.shields.io/npm/dm/icrush.svg" alt="Downloads"></a>
 <a href="https://www.npmjs.com/package/icrush"><img src="https://img.shields.io/npm/v/icrush.svg" alt="Version"></a>
@@ -58,9 +59,30 @@ window.icrush = new iCrush({
     /*类似控制器的地方*/
   };
 </script>
+
+<style>
+ /*写样式的地方*/
+</style>
 ```
 
 更多细节请[查阅文档](https://github.com/yelloxing/iCrush/blob/master/docs/index.md)获得帮助。
+
+如何调试loader？
+--------------------------------------
+
+首先进入test/webpack例子项目，运行：
+
+```bash
+npm run debug
+```
+
+在需要调试的地方提前添加“ debugger ”语句，这和普通的web端调试一样，接着，在chrome浏览器地址栏中输入：
+
+```
+chrome://inspect/#devices
+```
+
+接着，请点击“ Open dedicated DevTools for Node ”后进入调试界面。
 
 ## License
 

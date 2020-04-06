@@ -1,8 +1,9 @@
 <template>
   <div>
     <label for=''>测试</label>
-    <input class='itc' id='itd' i-model='info' />
-    <input class='itc' id='itd' i-model='info2' />
+    <label>test</label>
+    <input class='itc' id='itd1' i-model='info' />
+    <input class='itc' id='itd2' i-model='info2' />
     文本{{info}}
     <ul>
       <li>1</li>
@@ -10,19 +11,28 @@
       <li>3</li>
     </ul>
 
+    <pre>
+      第一段
+      第二段
+    </pre>
+
     <span i-bind='info'></span>
     <span i-bind:info='info'></span>
 
-    <page1 />
+    <page1></page1>
+
     <hr />
     <button @click="usePage2()">使用2</button>
-    <component is="page"></component>
+    <component :is="page"></component>
+
   </div>
 </template>
 
 <script>
   import page1 from './pages/page1.iCrush';
   /* import page2 from './pages/page2.iCrush';*/
+
+  console.log(page1);
 
   import pages from "./lazy-load";
 
@@ -41,8 +51,9 @@
     },
     methods: {
       usePage2() {
-        console.log('===========');
+
         this.page = page2;
+        console.log('===========');
       }
     },
     component: {
@@ -54,5 +65,9 @@
 <style>
   label {
     color: red;
+  }
+  pre{
+    font-size:10px;
+    color:blue;
   }
 </style>

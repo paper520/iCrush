@@ -4,7 +4,7 @@ import watcher from '../observe/watcher';
 import isFunction from '@yelloxing/core.js/isFunction';
 import get from '@yelloxing/core.js/get';
 
-import { compilerText, replaceDom } from '../../helper';
+import { compilerText } from '../../helper';
 
 export function renderMixin(iCrush) {
 
@@ -77,17 +77,15 @@ export function renderMixin(iCrush) {
             }
         }
 
-        // 触发props
+        // 更新组件挂载点的属性
         for (let i = 0; i < this.__componentTask.length; i++) {
             let component = this.__componentTask[i];
 
-            // 更新props
-            for (let j = 0; j < component.props.length; j++) {
-                let prop = component.props[j];
-                component.instance._prop[prop] = this[component.attrs[prop]];
+            // 对于内置的动态组件进行调用，其余的组件当前是隔绝的
+            if (component.instance._name == "component") {
+                let pageKey = component.attrs['i-bind:is'];
+                component.instance.lister(iCrush, this[pageKey]);
             }
-
-            component.instance.$trigger();
         }
 
         this.$$lifecycle('updated');
@@ -123,6 +121,10 @@ import isText from '@yelloxing/core.js/isText';
  * 根据字符串模板生成render函数
  * @param {string} template 字符串模板
  * @return {function} render函数
+ * 
+ * 特别注意：
+ * 为了减小打包大小，我们在运行时生成render函数的方法借助浏览器的接口实现，node版本的只有在打包阶段才会调用。
+ * 
  */
 export function createRenderFactroy(template) {
 

@@ -1,21 +1,72 @@
 
 // icrush-loader
 
-const renderFactory = require('./renderFactory/index');
-const iCrushLoaderSplit = require('./renderFactory/index').iCrushLoaderSplit;
+const path = require('path');
+const qs = require('querystring');
+const hash = require('hash-sum')
 
 module.exports = function loader(source) {
 
-    // 把字符串按照标签和普通字符串进行切割，方便后续操作
-    let tags = iCrushLoaderSplit(source);
+    const loaderContext = this;
 
-    // console.log(tags);
+    const {
+        rootContext,
+        resourcePath,
+        resourceQuery
+    } = loaderContext;
 
-    // 返回最终的结果
-    // 其实就是一个标准的iCrush组件
-    let renderStr = tags.script.replace('export default {', 'export default {render:function(createElement){ return ' + renderFactory(tags.template) + "},");
+    const filename = path.basename(resourcePath)
+    const rawQuery = resourceQuery.slice(1);
+    const incomingQuery = qs.parse(rawQuery);
+    const context = rootContext || process.cwd();
 
-    // console.log(renderStr);
+    const rawShortFilePath = path
+        .relative(context, resourcePath)
+        .replace(/^(\.\.[\/\\])+/, '');
 
-    return renderStr;
+    const id = hash(rawShortFilePath);
+
+    if (incomingQuery.type) {
+
+        let code = require('./render-html.js')(source, incomingQuery.type);
+
+        if (incomingQuery.type == 'style') {
+            if (code.length > 0) {
+                code = `export default \`${code}\``;
+            } else if (/^export default/.test(source)) {
+                code = source.replace(/^export default `/, '').replace(/`$/, '');
+            }
+        } else if (incomingQuery.type == 'script') {
+            if (code.length <= 0) {
+                code = source;
+            }
+        }
+
+        loaderContext.callback(null, code);
+
+        return;
+
+    } else {
+
+        let code = require('./render-html.js')(source, 'template');
+        code = require('./renderFactory')(code, id);
+
+        let exportCode = `
+
+            // 导入js
+            import script from './${filename}?iCrush&type=script&lang=js&hash=${id}&';
+
+            // 导入css
+            import './${filename}?iCrush&type=style&lang=css&hash=${id}&';
+
+            script.render=${code};
+
+            export default script;
+        `;
+
+        // console.log(exportCode);
+
+        return exportCode;
+    }
+
 };

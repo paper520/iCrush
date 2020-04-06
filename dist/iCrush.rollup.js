@@ -1,5 +1,5 @@
 /*!
-* iCrush v1.3.0
+* iCrush v1.5.2
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -37,6 +37,23 @@
         iCrush.use = function (extend) {
             extend.install.call(extend, iCrush);
         };
+
+    }
+
+    /**
+     * =========================================
+     * 挂载全局方法
+     */
+
+    function initGlobalAPI (iCrush) {
+
+        // 登记扩展内容
+        iCrush.prototype.__directiveLib = {};
+        iCrush.prototype.__componentLib = {};
+
+        // 挂载
+        mount(iCrush);
+        use(iCrush);
 
     }
 
@@ -85,36 +102,6 @@
         const type = getType(value);
         return type === '[object Function]' || type === '[object AsyncFunction]' ||
             type === '[object GeneratorFunction]' || type === '[object Proxy]';
-    }
-
-    /**
-     * =========================================
-     * 挂载全局方法
-     */
-
-    function initGlobalAPI (iCrush) {
-
-        // 登记扩展内容
-        iCrush.prototype.__directiveLib = {};
-        iCrush.prototype.__componentLib = {};
-        iCrush.prototype.__filterLib = {};
-
-        // 挂载
-        mount(iCrush);
-        use(iCrush);
-
-        // 过滤器调用方法
-        iCrush.prototype.$filter = function (filterName, ...params) {
-            let filter = this.__filterLib[filterName];
-            if (!isFunction(filter)) {
-                console.error('[iCrush warn]: Filter not available：' + filterName);
-
-                // 如果过滤器不存在，直接返回input
-                return params[0];
-            }
-            return filter.apply(this, params);
-        };
-
     }
 
     /**
@@ -410,13 +397,6 @@
 
         };
 
-        // 触发本组件注册事件
-        iCrush.prototype.$trigger = function () {
-            if (isFunction(this._options.lister)) {
-                this._options.lister.call(this, iCrush);
-            }
-        };
-
     }
 
     /**
@@ -692,23 +672,35 @@
             vnode.instance = new iCrush(vnode.options);
             vnode.instance.__parent = that;
 
-            // 记录组件
-            let props = vnode.options.props;
-            let attrs = vnode.attrs;
-            vnode.instance._prop = {};
-            if (props && props.length > 0) {
-                for (let i = 0; props && i < props.length; i++) {
-                    vnode.instance._prop[props[i]] = that[attrs[props[i]]];
-                }
+            // 校对组件上的属性
+            let attrs = {};
+            for (let key in vnode.attrs) {
+                if (!/^data-icrush-/.test(key)) {
 
-                that.__componentTask.push({
-                    props: vnode.options.props,
-                    attrs,
-                    instance: vnode.instance
-                });
+                    if (/^:/.test(key)) {
+                        attrs[key.replace('i-bind' + key)] = vnode.attrs[key];
+                    } else if (/^@/.test(key)) {
+                        attrs[key.replace(key.replace(/^@/, 'i-on:'))] = vnode.attrs[key];
+                    } else {
+                        attrs[key] = vnode.attrs[key];
+                    }
+
+                }
             }
 
-            vnode.instance.$trigger();
+            let component = {
+                attrs,
+                instance: vnode.instance
+            };
+
+            // 对于内置的动态组件进行调用，其余的组件当前是隔绝的
+            if (component.instance._name == "component") {
+                let pageKey = component.attrs['i-bind:is'];
+                component.instance.lister(iCrush, that[pageKey]);
+            }
+
+            // 记录组件
+            that.__componentTask.push(component);
 
         }
 
@@ -908,17 +900,15 @@
                 }
             }
 
-            // 触发props
+            // 更新组件挂载点的属性
             for (let i = 0; i < this.__componentTask.length; i++) {
                 let component = this.__componentTask[i];
 
-                // 更新props
-                for (let j = 0; j < component.props.length; j++) {
-                    let prop = component.props[j];
-                    component.instance._prop[prop] = this[component.attrs[prop]];
+                // 对于内置的动态组件进行调用，其余的组件当前是隔绝的
+                if (component.instance._name == "component") {
+                    let pageKey = component.attrs['i-bind:is'];
+                    component.instance.lister(iCrush, this[pageKey]);
                 }
-
-                component.instance.$trigger();
             }
 
             this.$$lifecycle('updated');
@@ -949,6 +939,10 @@
      * 根据字符串模板生成render函数
      * @param {string} template 字符串模板
      * @return {function} render函数
+     * 
+     * 特别注意：
+     * 为了减小打包大小，我们在运行时生成render函数的方法借助浏览器的接口实现，node版本的只有在打包阶段才会调用。
+     * 
      */
     function createRenderFactroy(template) {
 
@@ -998,6 +992,10 @@
         if (!(this instanceof iCrush)) {
             console.error('[iCrush warn]: iCrush is a constructor and should be called with the `new` keyword');
         }
+
+        let name = options.name || "noname";
+
+        this._name = name;
 
         this.$$lifecycle(options.beforeCreate);
 
@@ -1237,26 +1235,39 @@
     };
 
     var component = {
-      props: ['is'],
+      name: "component",
       data() {
         return {
           is: null
         };
       },
-      lister(iCrush) {
+      methods: {
+        lister(iCrush, newIS) {
 
-        // 如果动态组件没有改变
-        if (this._prop.is == this.is) return;
-        this.is = this._prop.is;
+          // 如果动态组件没有改变
+          if (newIS == this.is || newIS == null) return;
 
-        let options = this._prop.is;
-        options.el = this._el;
+          let oldComponent = this._oldComponent;
+          if (oldComponent) oldComponent.$$lifecycle("beforeDestroy");
 
-        // 标记替换而不是追加
-        options.el._nodeName = 'I-CRUSH-COMPONENT';
+          this.is = newIS;
 
-        // 重定向挂载点
-        this._el = new iCrush(options)._el;
+          let options = newIS;
+          options.el = this._el;
+
+          // 标记替换而不是追加
+          options.el._nodeName = 'I-CRUSH-COMPONENT';
+
+          // 重定向挂载点
+          this._oldComponent = new iCrush(options);
+          this._el = this._oldComponent._el;
+
+          if (oldComponent) {
+            oldComponent.$$lifecycle("destroyed");
+            oldComponent = null;
+          }
+
+        }
       }
     };
 

@@ -1,9 +1,26 @@
 
 // icrush-style-loader
 
+const qs = require('querystring');
+
 module.exports = function loader(source) {
 
-    // 预留的，先不做任何处理
+  const loaderContext = this;
 
-    return source;
+  const {
+    resourceQuery
+  } = loaderContext;
+
+  const rawQuery = resourceQuery.slice(1);
+  const incomingQuery = qs.parse(rawQuery);
+
+  if (incomingQuery.iCrush != null && incomingQuery.hash) {
+
+    let datahash = '[data-icrush-' + incomingQuery.hash + "]";
+
+    return source.replace(/( {0,}){/g, datahash + "{");
+  }
+
+  return source;
+
 };
