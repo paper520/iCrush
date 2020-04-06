@@ -1,4 +1,4 @@
-# [iCrush](https://github.com/yelloxing/iCrush) 📚 快速开始使用iCrush构建自己的项目
+# [iCrush](https://github.com/yelloxing/iCrush) 📚 🚧 🎮 快速开始使用iCrush构建自己的项目
 
 设计的理念是：网站是由一个个iCrush组件平行或嵌套拼接而成的，每个组件管理页面中的一部分，组件之间可以通信。
 
