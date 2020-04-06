@@ -28,7 +28,7 @@ module.exports = {
       }]
     }, {
       test: /\.css$/,
-      loader: ['style-loader', 'css-loader', 'postcss-loader','../../webpack/icrush-style-loader.js']
+      loader: ['style-loader', '../../webpack/icrush-style-loader.js', 'css-loader', 'postcss-loader']
     }]
   },
   resolve: {

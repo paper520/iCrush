@@ -2,8 +2,8 @@
  * .iCrush文件中分离出来的lang=css,lang=js等文件，进行loader配置扩展
  * 
  * 例如：
- *  XXX.iCrush?iCrush&type=script&lang=js&
- *  XXX.iCrush?iCrush&type=style&lang=css&
+ *  XXX.iCrush?iCrush&type=script&lang=js&hash=???&
+ *  XXX.iCrush?iCrush&type=style&lang=css&hash=???&
  * 
  */
 

@@ -1,4 +1,4 @@
-module.exports = function (template) {
+module.exports = function (template, id) {
 
   let doit = function (Engine) {
 
@@ -15,6 +15,8 @@ module.exports = function (template) {
         childrenRender += doit(childrenNode.eq(i)) + ",";
       }
       childrenRender = childrenRender.replace(/,$/, '') + "]";
+
+      value.attrs['data-iCrush-' + id] = "";
 
       return `createElement('${value.tagName}',${JSON.stringify(value.attrs)},${childrenRender})`;
 
