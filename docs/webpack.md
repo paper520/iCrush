@@ -38,7 +38,7 @@ icrush-loader用于解析.iCrush文本生成组件导出。
 </script>
 
 <style>
- /*写样式的地方*/
+ /*写样式的地方，所有的样式只会对当前的组件有效*/
 </style>
 ```
 

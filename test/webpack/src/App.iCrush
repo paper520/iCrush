@@ -1,6 +1,7 @@
 <template>
   <div>
     <label for=''>测试</label>
+    <label>test</label>
     <input class='itc' id='itd1' i-model='info' />
     <input class='itc' id='itd2' i-model='info2' />
     文本{{info}}
@@ -64,5 +65,9 @@
 <style>
   label {
     color: red;
+  }
+  pre{
+    font-size:10px;
+    color:blue;
   }
 </style>

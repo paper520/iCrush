@@ -15,7 +15,10 @@ module.exports = function loader(source) {
   const incomingQuery = qs.parse(rawQuery);
 
   if (incomingQuery.iCrush != null && incomingQuery.hash) {
-    console.log(source);
+
+    let datahash = '[data-icrush-' + incomingQuery.hash + "]";
+
+    return source.replace(/( {0,}){/g, datahash + "{");
   }
 
   return source;

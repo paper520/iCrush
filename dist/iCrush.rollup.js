@@ -1,5 +1,5 @@
 /*!
-* iCrush v1.5.0
+* iCrush v1.5.1
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -949,6 +949,10 @@
      * 根据字符串模板生成render函数
      * @param {string} template 字符串模板
      * @return {function} render函数
+     * 
+     * 特别注意：
+     * 为了减小打包大小，我们在运行时生成render函数的方法借助浏览器的接口实现，node版本的只有在打包阶段才会调用。
+     * 
      */
     function createRenderFactroy(template) {
 

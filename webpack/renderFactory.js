@@ -16,7 +16,7 @@ module.exports = function (template, id) {
       }
       childrenRender = childrenRender.replace(/,$/, '') + "]";
 
-      value.attrs['data-iCrush-' + id] = "";
+      value.attrs['data-icrush-' + id] = "";
 
       return `createElement('${value.tagName}',${JSON.stringify(value.attrs)},${childrenRender})`;
 
@@ -24,6 +24,8 @@ module.exports = function (template, id) {
 
   };
 
+
+  // template -> render依赖一个专门解析xhtml的库： https://github.com/yelloxing/xhtml-engine
   let Engine = require('xhtml-engine')(template.trim());
 
   let renderString = `function (createElement) {
