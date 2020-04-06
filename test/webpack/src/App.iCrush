@@ -23,7 +23,7 @@
 
     <hr />
     <button @click="usePage2()">使用2</button>
-    <component is="page"></component>
+    <component :is="page"></component>
 
   </div>
 </template>

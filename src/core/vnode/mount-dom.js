@@ -37,23 +37,35 @@ function mountDom(that, key, pEl, iCrush) {
         vnode.instance = new iCrush(vnode.options);
         vnode.instance.__parent = that;
 
-        // 记录组件
-        let props = vnode.options.props;
-        let attrs = vnode.attrs;
-        vnode.instance._prop = {};
-        if (props && props.length > 0) {
-            for (let i = 0; props && i < props.length; i++) {
-                vnode.instance._prop[props[i]] = that[attrs[props[i]]];
-            }
+        // 校对组件上的属性
+        let attrs = {};
+        for (let key in vnode.attrs) {
+            if (!/^data-icrush-/.test(key)) {
 
-            that.__componentTask.push({
-                props: vnode.options.props,
-                attrs,
-                instance: vnode.instance
-            });
+                if (/^:/.test(key)) {
+                    attrs[key.replace('i-bind' + key)] = vnode.attrs[key];
+                } else if (/^@/.test(key)) {
+                    attrs[key.replace(key.replace(/^@/, 'i-on:'))] = vnode.attrs[key];
+                } else {
+                    attrs[key] = vnode.attrs[key];
+                }
+
+            }
         }
 
-        vnode.instance.$trigger();
+        let component = {
+            attrs,
+            instance: vnode.instance
+        };
+
+        // 对于内置的动态组件进行调用，其余的组件当前是隔绝的
+        if (component.instance._name == "component") {
+            let pageKey = component.attrs['i-bind:is'];
+            component.instance.lister(iCrush, that[pageKey]);
+        }
+
+        // 记录组件
+        that.__componentTask.push(component);
 
     }
 

@@ -13,6 +13,10 @@ function iCrush(options) {
         console.error('[iCrush warn]: iCrush is a constructor and should be called with the `new` keyword');
     }
 
+    let name = options.name || "noname";
+
+    this._name = name;
+
     this.$$lifecycle(options.beforeCreate);
 
     // 初始化对象

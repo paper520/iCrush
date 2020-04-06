@@ -9,6 +9,7 @@ iCrush可以理解为一个比较复杂的库或一个简单的视图管理框�
 下面是一些常用的内置接口、指令或组件等：
 
 - [内置指令](./apis/directive.md)
+- [内置组件](./apis/component.md)
 
 或许你还可以通过[查看 README](https://github.com/yelloxing/iCrush#readme)来获得最新资讯，当然，在使用过程中有任何问题都可以[提Issue](https://github.com/yelloxing/iCrush/issues)来告诉我们！
 

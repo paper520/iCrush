@@ -9,7 +9,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /*!
-* iCrush v1.5.1
+* iCrush v1.5.2
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -39,6 +39,20 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     iCrush.use = function (extend) {
       extend.install.call(extend, iCrush);
     };
+  }
+  /**
+   * =========================================
+   * 挂载全局方法
+   */
+
+
+  function initGlobalAPI(iCrush) {
+    // 登记扩展内容
+    iCrush.prototype.__directiveLib = {};
+    iCrush.prototype.__componentLib = {}; // 挂载
+
+    mount(iCrush);
+    use(iCrush);
   }
 
   var toString = Object.prototype.toString;
@@ -89,37 +103,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     var type = getType(value);
     return type === '[object Function]' || type === '[object AsyncFunction]' || type === '[object GeneratorFunction]' || type === '[object Proxy]';
-  }
-  /**
-   * =========================================
-   * 挂载全局方法
-   */
-
-
-  function initGlobalAPI(iCrush) {
-    // 登记扩展内容
-    iCrush.prototype.__directiveLib = {};
-    iCrush.prototype.__componentLib = {};
-    iCrush.prototype.__filterLib = {}; // 挂载
-
-    mount(iCrush);
-    use(iCrush); // 过滤器调用方法
-
-    iCrush.prototype.$filter = function (filterName) {
-      var filter = this.__filterLib[filterName];
-
-      for (var _len = arguments.length, params = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        params[_key - 1] = arguments[_key];
-      }
-
-      if (!isFunction(filter)) {
-        console.error('[iCrush warn]: Filter not available：' + filterName); // 如果过滤器不存在，直接返回input
-
-        return params[0];
-      }
-
-      return filter.apply(this, params);
-    };
   }
   /**
    * 判断一个值是不是String。
@@ -371,23 +354,23 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       } // 挂载数据
 
 
-      for (var _key2 in this._data) {
+      for (var _key in this._data) {
         // 数据的校验在监听的时候进行
-        this[_key2] = this._data[_key2];
+        this[_key] = this._data[_key];
       } // 挂载局部组件
 
 
       this.__componentLib_scope = {};
 
-      for (var _key3 in options.component) {
-        this.__componentLib_scope[_key3] = options.component[_key3];
+      for (var _key2 in options.component) {
+        this.__componentLib_scope[_key2] = options.component[_key2];
       } // 挂载局部指令
 
 
       this.__directiveLib_scope = {};
 
-      for (var _key4 in options.directive) {
-        this.__directiveLib_scope[_key4] = options.directive[_key4];
+      for (var _key3 in options.directive) {
+        this.__directiveLib_scope[_key3] = options.directive[_key3];
       }
     };
   }
@@ -414,13 +397,6 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       'beforeUpdate', 'updated', // 销毁组件
       'beforeDestroy', 'destroyed'].indexOf(callbackName) > -1 && isFunction(this._options[callbackName])) {
         this._options[callbackName].call(this);
-      }
-    }; // 触发本组件注册事件
-
-
-    iCrush.prototype.$trigger = function () {
-      if (isFunction(this._options.lister)) {
-        this._options.lister.call(this, iCrush);
       }
     };
   }
@@ -691,25 +667,35 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       vnode.options.el = el; // 这相当于子组件，挂载好了以后，启动即可
 
       vnode.instance = new iCrush(vnode.options);
-      vnode.instance.__parent = that; // 记录组件
+      vnode.instance.__parent = that; // 校对组件上的属性
 
-      var props = vnode.options.props;
-      var attrs = vnode.attrs;
-      vnode.instance._prop = {};
+      var attrs = {};
 
-      if (props && props.length > 0) {
-        for (var i = 0; props && i < props.length; i++) {
-          vnode.instance._prop[props[i]] = that[attrs[props[i]]];
+      for (var _key4 in vnode.attrs) {
+        if (!/^data-icrush-/.test(_key4)) {
+          if (/^:/.test(_key4)) {
+            attrs[_key4.replace('i-bind' + _key4)] = vnode.attrs[_key4];
+          } else if (/^@/.test(_key4)) {
+            attrs[_key4.replace(_key4.replace(/^@/, 'i-on:'))] = vnode.attrs[_key4];
+          } else {
+            attrs[_key4] = vnode.attrs[_key4];
+          }
         }
-
-        that.__componentTask.push({
-          props: vnode.options.props,
-          attrs: attrs,
-          instance: vnode.instance
-        });
       }
 
-      vnode.instance.$trigger();
+      var _component = {
+        attrs: attrs,
+        instance: vnode.instance
+      }; // 对于内置的动态组件进行调用，其余的组件当前是隔绝的
+
+      if (_component.instance._name == "component") {
+        var pageKey = _component.attrs['i-bind:is'];
+
+        _component.instance.lister(iCrush, that[pageKey]);
+      } // 记录组件
+
+
+      that.__componentTask.push(_component);
     } // 2.普通标签
     else if (vnode.type == 'tag') {
         el = document.createElement(vnode.tagName);
@@ -749,8 +735,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         } // 挂载好父亲以后，挂载孩子
 
 
-        for (var _i = 0; _i < vnode.children.length; _i++) {
-          mountDom(that, key + ".children[" + _i + "]", el, iCrush);
+        for (var i = 0; i < vnode.children.length; i++) {
+          mountDom(that, key + ".children[" + i + "]", el, iCrush);
         }
       } // 3.普通文本
       else if (vnode.type == 'text') {
@@ -878,25 +864,24 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       } // 更新{{}}
 
 
-      for (var _i2 = 0; _i2 < this.__bindTextTask.length; _i2++) {
-        var bindText = this.__bindTextTask[_i2];
+      for (var _i = 0; _i < this.__bindTextTask.length; _i++) {
+        var bindText = this.__bindTextTask[_i];
         var content = compilerText(this, bindText.content);
 
         if (bindText.el.textContent != content) {
           bindText.el.textContent = content;
         }
-      } // 触发props
+      } // 更新组件挂载点的属性
 
 
-      for (var _i3 = 0; _i3 < this.__componentTask.length; _i3++) {
-        var _component = this.__componentTask[_i3]; // 更新props
+      for (var _i2 = 0; _i2 < this.__componentTask.length; _i2++) {
+        var _component2 = this.__componentTask[_i2]; // 对于内置的动态组件进行调用，其余的组件当前是隔绝的
 
-        for (var j = 0; j < _component.props.length; j++) {
-          var prop = _component.props[j];
-          _component.instance._prop[prop] = this[_component.attrs[prop]];
+        if (_component2.instance._name == "component") {
+          var pageKey = _component2.attrs['i-bind:is'];
+
+          _component2.instance.lister(iCrush, this[pageKey]);
         }
-
-        _component.instance.$trigger();
       }
 
       this.$$lifecycle('updated');
@@ -954,8 +939,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       var attrs = {};
 
-      for (var _i4 = 0; _i4 < node.attributes.length; _i4++) {
-        attrs[node.attributes[_i4].nodeName] = node.attributes[_i4].nodeValue;
+      for (var _i3 = 0; _i3 < node.attributes.length; _i3++) {
+        attrs[node.attributes[_i3].nodeName] = node.attributes[_i3].nodeValue;
       } // 返回生成的元素
 
 
@@ -977,6 +962,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       console.error('[iCrush warn]: iCrush is a constructor and should be called with the `new` keyword');
     }
 
+    var name = options.name || "noname";
+    this._name = name;
     this.$$lifecycle(options.beforeCreate); // 初始化对象
 
     this.$$init(options);
@@ -1203,29 +1190,31 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     }
   };
   var component = {
-    props: ['is'],
+    name: "component",
     data: function data() {
       return {
         is: null
       };
     },
-    lister: function lister(iCrush) {
-      // 如果动态组件没有改变
-      if (this._prop.is == this.is) return;
-      var oldComponent = this._oldComponent;
-      if (oldComponent) oldComponent.$$lifecycle("beforeDestroy");
-      this.is = this._prop.is;
-      var options = this._prop.is;
-      options.el = this._el; // 标记替换而不是追加
+    methods: {
+      lister: function lister(iCrush, newIS) {
+        // 如果动态组件没有改变
+        if (newIS == this.is || newIS == null) return;
+        var oldComponent = this._oldComponent;
+        if (oldComponent) oldComponent.$$lifecycle("beforeDestroy");
+        this.is = newIS;
+        var options = newIS;
+        options.el = this._el; // 标记替换而不是追加
 
-      options.el._nodeName = 'I-CRUSH-COMPONENT'; // 重定向挂载点
+        options.el._nodeName = 'I-CRUSH-COMPONENT'; // 重定向挂载点
 
-      this._oldComponent = new iCrush(options);
-      this._el = this._oldComponent._el;
+        this._oldComponent = new iCrush(options);
+        this._el = this._oldComponent._el;
 
-      if (oldComponent) {
-        oldComponent.$$lifecycle("destroyed");
-        oldComponent = null;
+        if (oldComponent) {
+          oldComponent.$$lifecycle("destroyed");
+          oldComponent = null;
+        }
       }
     }
   };

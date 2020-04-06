@@ -77,17 +77,15 @@ export function renderMixin(iCrush) {
             }
         }
 
-        // 触发props
+        // 更新组件挂载点的属性
         for (let i = 0; i < this.__componentTask.length; i++) {
             let component = this.__componentTask[i];
 
-            // 更新props
-            for (let j = 0; j < component.props.length; j++) {
-                let prop = component.props[j];
-                component.instance._prop[prop] = this[component.attrs[prop]];
+            // 对于内置的动态组件进行调用，其余的组件当前是隔绝的
+            if (component.instance._name == "component") {
+                let pageKey = component.attrs['i-bind:is'];
+                component.instance.lister(iCrush, this[pageKey]);
             }
-
-            component.instance.$trigger();
         }
 
         this.$$lifecycle('updated');
