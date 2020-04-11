@@ -118,7 +118,8 @@ function mountDom(that, key, pEl, iCrush) {
     // 3.普通文本
     else if (vnode.type == 'text') {
 
-        el = document.createTextNode(vnode.content);
+        el = document.createTextNode("");
+        el.textContent = vnode.content.replace(/↵/g, '\n');
         pEl.appendChild(el);
 
     }
@@ -126,7 +127,8 @@ function mountDom(that, key, pEl, iCrush) {
     // 4.绑定文本
     else if (vnode.type == 'bindText') {
 
-        el = document.createTextNode(compilerText(that, vnode.content));
+        el = document.createTextNode("");
+        el.textContent = compilerText(that, vnode.content).replace(/↵/g, '\n');
         pEl.appendChild(el);
 
         that.__bindTextTask.push({

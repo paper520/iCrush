@@ -5,6 +5,10 @@
     <input class='itc' id='itd1' i-model='info' />
     <input class='itc' id='itd2' i-model='info2' />
     文本{{info}}
+    <pre>
+      111111111111111111111{{info}}
+      222222222222222222222222
+    </pre>
     <ul>
       <li>1</li>
       <li>2</li>
