@@ -1,4 +1,4 @@
-# [iCrush](https://github.com/yelloxing/iCrush) 📚 一个渐进型的前端小框架
+# [iCrush](https://github.com/yelloxing/iCrush) 📚 🚧 🎮 一个渐进型的前端小框架
 
 > 把字符串模板解析成render函数依赖一个专门解析xhtml的库：[xhtml-engine](https://github.com/yelloxing/xhtml-engine)
 

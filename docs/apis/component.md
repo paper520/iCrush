@@ -1,4 +1,4 @@
-# [iCrush](https://github.com/yelloxing/iCrush) 📚 内置组件
+# [iCrush](https://github.com/yelloxing/iCrush) 📚 🚧 🎮 单一的内置组件
 
 - 动态组件：component
 

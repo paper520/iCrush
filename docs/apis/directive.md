@@ -1,4 +1,4 @@
-# [iCrush](https://github.com/yelloxing/iCrush) 📚 内置指令
+# [iCrush](https://github.com/yelloxing/iCrush) 📚 🚧 🎮 单一的内置指令
 
 - i-model:双向绑定，一般用于输入框，可以实现视图和数据之间的同步
 

@@ -1,6 +1,6 @@
 {
   "name": "icrush",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "📚 一个渐进型的前端小框架。",
   "main": "./dist/iCrush.min.js",
   "scripts": {
@@ -34,6 +34,6 @@
     "@yelloxing/core.js": "^0.3.7",
     "hash-sum": "^2.0.0",
     "webpack": "^4.42.1",
-    "xhtml-engine": "^0.1.1"
+    "xhtml-engine": "^1.0.5"
   }
 }

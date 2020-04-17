@@ -38,7 +38,13 @@ module.exports = function loader(source) {
             }
         } else if (incomingQuery.type == 'script') {
             if (code.length <= 0) {
-                code = source;
+                if (/\/\*icrush-loader-es\*\/$/.test(source)) {
+                    code = source;
+                } else {
+                    code = 'export default {};';
+                }
+            } else {
+                code += "\n/*icrush-loader-es*/";
             }
         }
 
@@ -58,13 +64,11 @@ module.exports = function loader(source) {
 
             // 导入css
             import './${filename}?iCrush&type=style&lang=css&hash=${id}&';
-
+            
             script.render=${code};
 
             export default script;
         `;
-
-        // console.log(exportCode);
 
         return exportCode;
     }

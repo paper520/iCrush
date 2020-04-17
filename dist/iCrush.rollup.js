@@ -1,5 +1,5 @@
 /*!
-* iCrush v1.5.2
+* iCrush v1.6.0
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -753,7 +753,8 @@
         // 3.普通文本
         else if (vnode.type == 'text') {
 
-            el = document.createTextNode(vnode.content);
+            el = document.createTextNode("");
+            el.textContent = vnode.content.replace(/↵/g, '\n');
             pEl.appendChild(el);
 
         }
@@ -761,7 +762,8 @@
         // 4.绑定文本
         else if (vnode.type == 'bindText') {
 
-            el = document.createTextNode(compilerText(that, vnode.content));
+            el = document.createTextNode("");
+            el.textContent = compilerText(that, vnode.content).replace(/↵/g, '\n');
             pEl.appendChild(el);
 
             that.__bindTextTask.push({
@@ -894,7 +896,7 @@
             // 更新{{}}
             for (let i = 0; i < this.__bindTextTask.length; i++) {
                 let bindText = this.__bindTextTask[i];
-                let content = compilerText(this, bindText.content);
+                let content = compilerText(this, bindText.content).replace(/↵/g, '\n');
                 if (bindText.el.textContent != content) {
                     bindText.el.textContent = content;
                 }

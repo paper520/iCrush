@@ -71,7 +71,7 @@ export function renderMixin(iCrush) {
         // 更新{{}}
         for (let i = 0; i < this.__bindTextTask.length; i++) {
             let bindText = this.__bindTextTask[i];
-            let content = compilerText(this, bindText.content);
+            let content = compilerText(this, bindText.content).replace(/↵/g, '\n');
             if (bindText.el.textContent != content) {
                 bindText.el.textContent = content;
             }

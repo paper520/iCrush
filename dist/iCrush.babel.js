@@ -9,7 +9,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 /*!
-* iCrush v1.5.2
+* iCrush v1.6.0
 * (c) 2007-2020 心叶 git+https://github.com/yelloxing/iCrush.git
 * License: MIT
 */
@@ -740,11 +740,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         }
       } // 3.普通文本
       else if (vnode.type == 'text') {
-          el = document.createTextNode(vnode.content);
+          el = document.createTextNode("");
+          el.textContent = vnode.content.replace(/↵/g, '\n');
           pEl.appendChild(el);
         } // 4.绑定文本
         else if (vnode.type == 'bindText') {
-            el = document.createTextNode(compilerText(that, vnode.content));
+            el = document.createTextNode("");
+            el.textContent = compilerText(that, vnode.content).replace(/↵/g, '\n');
             pEl.appendChild(el);
 
             that.__bindTextTask.push({
@@ -866,7 +868,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
       for (var _i = 0; _i < this.__bindTextTask.length; _i++) {
         var bindText = this.__bindTextTask[_i];
-        var content = compilerText(this, bindText.content);
+        var content = compilerText(this, bindText.content).replace(/↵/g, '\n');
 
         if (bindText.el.textContent != content) {
           bindText.el.textContent = content;
