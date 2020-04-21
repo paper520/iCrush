@@ -17,7 +17,7 @@
 
     <pre>
       第一段
-      第二段
+      第二段'"`
     </pre>
 
     <span i-bind='info'></span>

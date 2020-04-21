@@ -77,15 +77,19 @@ function cloneRule(rawRules) {
             }
         }
 
-        if (require('@yelloxing/core.js').isString(clonedRawRules[i].loader)) {
-            clonedRawRules[i].loader = [clonedRawRules[i].loader];
+        let loader = clonedRawRules[i].loader || clonedRawRules[i].use;
+        if (require('@yelloxing/core.js').isString(loader)) {
+            clonedRawRules[i].use = undefined;
+            clonedRawRules[i].loader = [loader];
         }
 
-        if (require('@yelloxing/core.js').isString(iCrushLoader[0].loader)) {
-            clonedRawRules[i].loader.push(iCrushLoader[0].loader);
+        // 追加icrush-loader
+        let iLoader = iCrushLoader[0].loader || iCrushLoader[0].use;
+        if (require('@yelloxing/core.js').isString(iLoader)) {
+            clonedRawRules[i].loader.push(iLoader);
         } else {
-            for (let j = 0; j < iCrushLoader[0].loader.length; j++) {
-                clonedRawRules[i].loader.push(iCrushLoader[0].loader[j]);
+            for (let j = 0; j < iLoader.length; j++) {
+                clonedRawRules[i].loader.push(iLoader[j]);
             }
         }
 

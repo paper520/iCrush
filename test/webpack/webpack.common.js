@@ -15,7 +15,7 @@ module.exports = {
     }, {
       test: /\.iCrush$/,
       exclude: /node_modules/,
-      loader: ['../../webpack/icrush-loader.js']
+      use: ['../../webpack/icrush-loader.js']
     }, {
       test: /\.(png|jpg|jpeg|gif|bmp)$/,
       loader: [{
