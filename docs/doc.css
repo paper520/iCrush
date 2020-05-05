@@ -10,7 +10,7 @@ body {
 }
 
 header {
-    color: #333;
+    color: #2194CE;
     font-size: .25rem;
     margin: .1rem 0 .2rem 0;
 }
@@ -26,6 +26,10 @@ h2 {
     font-size: .18rem;
     margin-top: .40rem;
     font-weight: normal;
+}
+
+h4{
+    color:red;
 }
 
 img {
@@ -59,7 +63,8 @@ a.list {
 
 li {
     line-height: 1.6em;
-    padding-left: 2em;
+    margin-left: 2em;
+    list-style-type: disc;
 }
 
 .bingo,

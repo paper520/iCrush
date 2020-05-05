@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="../../libs/easycss-1.3.1.min.css">
+  <link rel="stylesheet" href="../../libs/prettify.css">
+  <link rel="stylesheet" href="../../doc.css">
+  <script src="../../libs/prettify.js"></script>
+</head>
+
+<body onload="prettyPrint()">
+  <header>
+    单一的内置组件
+  </header>
+  <p>
+    iCrush本身提供了一些具有特殊功能的组件或标签：
+  </p>
+  <h4>
+    动态组件：component
+  </h4>
+  <pre class='prettyprint lang-html'>&lt;component :is='page'&gt;&lt;/component&gt;</pre>
+  <p>
+    通过修改page的值可以动态修改挂载的组件，page是当前组件的data中的一个值：
+  </p>
+  <pre class='prettyprint lang-js'>new iCrush({
+  data(){
+    return {
+      page:null
+    };
+  }
+});</pre>
+  <p>
+    在任何时候通过this.page=newPage的形式修改都可以同步更新组件。
+  </p>
+</body>
+
+</html>

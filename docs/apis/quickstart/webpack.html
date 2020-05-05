@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="../../libs/easycss-1.3.1.min.css">
+  <link rel="stylesheet" href="../../libs/prettify.css">
+  <link rel="stylesheet" href="../../doc.css">
+  <script src="../../libs/prettify.js"></script>
+</head>
+
+<body onload="prettyPrint()">
+  <header>
+    基于webpack开发
+  </header>
+  <p class="warn">
+    为了方便学习，你可以
+    <a href="https://github.com/yelloxing/iCrush/tree/master/example" target="_blank">点击此处</a>
+    查看一个实际的例子！该例子会随项目持续迭代。
+  </p>
+  <p>
+    和别的使用webpack打包的项目一样，我们需要安装必要的loader和插件然后在
+    <a href="https://github.com/yelloxing/iCrush/blob/master/example/webpack.common.js"
+      target="_blank">webpack.config.js</a>
+    中进行配置。
+  </p>
+  <h2>
+    依赖的安装
+  </h2>
+  <p>
+    因为是使用iCrush开发，你需要额外安装它：
+  </p>
+  <pre class='prettyprint'>npm install --save icrush</pre>
+  <p>
+    如果你会添加.iCrush文件，你还需要安装必须的loader和plug：
+  </p>
+  <pre class='prettyprint'>npm install --save-dev icrush-loader icrush-style-loader icrush-loader-plug</pre>
+  <h2>
+    进行配置
+  </h2>
+  <p>
+    安装好了之后，需要为.iCrush文件配置loader：
+  </p>
+  <pre class='prettyprint lang-js'>{
+    test: /\.iCrush$/,
+    loader: ['icrush-loader']
+},{
+  {
+    test: /\.css$/,
+    loader: ['style-loader', 'icrush-style-loader', 'css-loader']
+  }
+}</pre>
+  <p>
+    此外，loader还依赖一个插件，我们需要引入并使用：
+  </p>
+  <pre class='prettyprint lang-js'>const iCrushLoaderPlugin = require('icrush-loader-plug');
+
+// webpack中使用插件
+plugins: [
+  new iCrushLoaderPlugin()
+]</pre>
+  <p>
+    icrush-loader用于解析.iCrush文本生成组件导出，这样你就可以把一个.iCrush文件看成一个组件，直接使用import或别的方式引入来拼接成完整的页面即可，其余的和非webpack项目一样。
+  </p>
+  <h2>.iCrush文件格式</h2>
+  <pre class='prettyprint lang-html'>&lt;template&gt;
+  &lt;!-- 页面模板 --&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+  /*可以在这里引入更多.iCrush文件*/
+  export default {
+    /*类似控制器的地方*/
+  };
+&lt;/script&gt;
+
+&lt;style&gt;
+  /*写样式的地方，所有的样式只会对当前的组件有效*/
+&lt;/style&gt;</pre>
+  <p class="warn">
+    需要注意的是template必须有一个根节点。
+  </p>
+</body>
+
+</html>
