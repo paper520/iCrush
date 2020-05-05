@@ -3,8 +3,8 @@
 .project
 node_modules
 .vscode
+icrush-loader
+icrush-loader-plug
+icrush-style-loader
+example
 docs
-examples
-test
-src
-scripts
