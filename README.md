@@ -6,6 +6,32 @@
 <a href="https://www.npmjs.com/package/icrush"><img src="https://img.shields.io/npm/v/icrush.svg" alt="Version"></a>
 <a href="https://github.com/yelloxing/icrush/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/icrush.svg" alt="License"></a>
 
+| Project | Status | Download |Description |
+|---------|--------|-------|------|
+| [icrush-loader]          | [![icrush-loader-status]][icrush-loader-package]             |[![icrush-loader-download-status]][icrush-loader-download] | iCrush的loader |
+| [icrush-style-loader]    | [![icrush-style-loader-status]][icrush-style-loader-package] |[![icrush-style-loader-download-status]][icrush-style-loader-download] | iCrush的样式loader |
+| [icrush-loader-plug]     | [![icrush-loader-plug-status]][icrush-loader-plug-package]   |[![icrush-loader-plug-download-status]][icrush-loader-plug-download] | iCrush打包插件 |
+
+[icrush-loader]: https://github.com/yelloxing/iCrush/icrush-loader
+[icrush-style-loader]: https://github.com/yelloxing/iCrush/icrush-style-loader
+[icrush-loader-plug]: https://github.com/yelloxing/iCrush/icrush-loader-plug
+
+[icrush-loader-status]: https://img.shields.io/npm/v/icrush-loader.svg
+[icrush-style-loader-status]: https://img.shields.io/npm/v/icrush-style-loader.svg
+[icrush-loader-plug-status]: https://img.shields.io/npm/v/icrush-loader-plug.svg
+
+[icrush-loader-package]: https://npmjs.com/package/icrush-loader
+[icrush-style-loader-package]: https://npmjs.com/package/icrush-style-loader
+[icrush-loader-plug-package]: https://npmjs.com/package/icrush-loader-plug
+
+[icrush-loader-download-status]:https://img.shields.io/npm/dm/icrush-loader.svg
+[icrush-style-loader-download-status]:https://img.shields.io/npm/dm/icrush-style-loader.svg
+[icrush-loader-plug-download-status]:https://img.shields.io/npm/dm/icrush-loader-plug.svg
+
+[icrush-loader-download]:https://yelloxing.github.io/npm-downloads/?interval=7&packages=icrush-loader
+[icrush-style-loader-download]:https://yelloxing.github.io/npm-downloads/?interval=7&packages=icrush-style-loader
+[icrush-loader-plug-download]:https://yelloxing.github.io/npm-downloads/?interval=7&packages=icrush-loader-plug
+
 ## Issues
 使用的时候遇到任何问题或有好的建议，请点击进入[issue](https://github.com/yelloxing/iCrush/issues)！你可以[查阅文档](https://yelloxing.github.io/iCrush)获得接口API和入门教程。
 
