@@ -2,7 +2,7 @@
 
 const path = require('path');
 const qs = require('querystring');
-const hash = require('hash-sum')
+const hash = require('hash-sum');
 
 module.exports = function loader(source) {
 
@@ -14,7 +14,7 @@ module.exports = function loader(source) {
     resourceQuery
   } = loaderContext;
 
-  const filename = path.basename(resourcePath)
+  const filename = path.basename(resourcePath);
   const rawQuery = resourceQuery.slice(1);
   const incomingQuery = qs.parse(rawQuery);
   const context = rootContext || process.cwd();

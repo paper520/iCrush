@@ -33,7 +33,7 @@ module.exports = {
       }]
     }, {
       test: /\.css$/,
-      loader: ['style-loader', '../../icrush-style-loader/index.js', 'css-loader', 'postcss-loader']
+      loader: ['../../icrush-style-loader/index.js', 'css-loader', 'postcss-loader']
     }]
   },
   plugins: [
