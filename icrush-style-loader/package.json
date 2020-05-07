@@ -1,6 +1,6 @@
 {
   "name": "icrush-style-loader",
-  "version": "0.1.2-alpha",
+  "version": "1.0.0",
   "description": "📚 iCrush的style-loader",
   "main": "index.js",
   "repository": {

@@ -11,7 +11,6 @@
     <script src="./libs/clay.min.js"></script>
     <title>文档 - iCrush.js</title>
     <script>
-
         function loadpage(url) {
 
             // 修改页面
@@ -19,7 +18,8 @@
             window.location.href = "#/" + url;
 
             // 修改选中
-            var lis = $$('li[onclick]'), flag;
+            var lis = $$('li[onclick]'),
+                flag;
             for (flag = 0; flag < lis.length; flag++) {
                 if (lis.eq(flag).attr('onclick') == "loadpage(\"" + url + "\")") {
                     lis.eq(flag).attr('statue', 'selected');
@@ -35,14 +35,14 @@
                 window.location.href = "https://github.com/yelloxing/iCrush";
             }
         }
-
     </script>
 </head>
 
 <body onresize="changeSize()">
     <div class="menu-frame" id='menu-frame'>
+        <a target="_blank" class='returnV1' href="https://github.com/yelloxing/iCrush/blob/version-1.0/docs/index.md">返回V1</a>
         <header onclick='showInfo()'>
-            iCrush / API
+            iCrush V2 / API
         </header>
         <input type="text" placeholder="Type to filter" onkeyup='doSearch(this.value)'>
         <span>说明&amp;指南</span>
@@ -66,12 +66,13 @@
 </body>
 
 <script>
-
     window.setTimeout(function () {
         loadpage(window.location.href.replace(/[^#]*(#\/){0,1}/, '') || "quickstart/environment");
     }, 200);
 
-    var lis = document.getElementsByTagName('li'), i;
+    var lis = document.getElementsByTagName('li'),
+        i;
+
     function doSearch(key) {
         for (i = 0; i < lis.length; i++) {
             if (new RegExp(key).test(lis[i].innerText)) {
@@ -83,17 +84,15 @@
     }
 
     window.console && window.console.log && (console.log([
-        '%c ',
-        ' ',
-        '📚 🚧 🎮  一个渐进型的前端小框架',
-        ' '
-    ].join('\n'), "color:#d66eac"),
+            '%c ',
+            ' ',
+            '📚 🚧 🎮  一个渐进型的前端小框架',
+            ' '
+        ].join('\n'), "color:#d66eac"),
         console.log("%chttps://github.com/yelloxing/iCrush", "color:#5292b2"));
-
 </script>
 
 <script>
-
     // 适配不同大小屏幕
     function changeSize() {
         var body = document.getElementsByTagName('body')[0],
@@ -113,7 +112,6 @@
         iframe.style.width = "calc(" + (100 / scale) + "vw - 2.6rem)";
     }
     changeSize();
-
 </script>
 
 </html>

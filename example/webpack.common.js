@@ -27,7 +27,7 @@ module.exports = {
       }]
     }, {
       test: /\.css$/,
-      loader: ['style-loader', 'icrush-style-loader', 'css-loader', 'postcss-loader']
+      loader: ['icrush-style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
     }]
   },
   plugins: [
