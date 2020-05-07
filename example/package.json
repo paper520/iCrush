@@ -22,8 +22,8 @@
     "css-loader": "^2.1.1",
     "file-loader": "^4.0.0",
     "node-sass": "^4.13.1",
-    "icrush-loader": "0.1.0-alpha",
-    "icrush-loader-plug": "0.1.0-alpha",
+    "icrush-loader": "0.2.0",
+    "icrush-loader-plug": "0.2.0",
     "icrush-style-loader": "1.0.0",
     "postcss": "^7.0.14",
     "postcss-loader": "^3.0.0",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@yelloxing/normalize.css": "^0.2.0",
-    "icrush": "^2.0.0-alpha",
+    "icrush": "^2.0.0",
     "image2d": "^1.6.7"
   }
 }

@@ -21,7 +21,7 @@ console.log(
 
 let banner = `/*!
 * iCrush v`+ packageJSON.version + `
-* (c) 2007-`+ new Date().getFullYear() + ` ` + packageJSON.author + ` ` + packageJSON.repository.url + `
+* (c) 2019-`+ new Date().getFullYear() + ` ` + packageJSON.author + ` ` + packageJSON.repository.url + `
 * License: `+ packageJSON.license + `
 */\n`;
 
