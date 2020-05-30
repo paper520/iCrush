@@ -1,11 +1,11 @@
 {
   "name": "icrush-style-loader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "📚 iCrush的style-loader",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yelloxing/iCrush/icrush-style-loader"
+    "url": "git+https://github.com/yelloxing/iCrush/tree/master/icrush-style-loader"
   },
   "keywords": [
     "iCrush",

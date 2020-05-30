@@ -1,11 +1,11 @@
 {
   "name": "icrush-loader-plug",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "📚 iCrush的辅助插件",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yelloxing/iCrush/icrush-loader-plug"
+    "url": "git+https://github.com/yelloxing/iCrush/tree/master/icrush-loader-plug"
   },
   "keywords": [
     "iCrush",

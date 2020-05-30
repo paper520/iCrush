@@ -1,6 +1,6 @@
 {
   "name": "icrush",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "📚 一个渐进型的前端小框架。",
   "main": "./dist/iCrush.min.js",
   "scripts": {

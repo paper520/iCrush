@@ -12,9 +12,9 @@
 | [icrush-style-loader]    | [![icrush-style-loader-status]][icrush-style-loader-package] |[![icrush-style-loader-download-status]][icrush-style-loader-download] | iCrush的样式loader |
 | [icrush-loader-plug]     | [![icrush-loader-plug-status]][icrush-loader-plug-package]   |[![icrush-loader-plug-download-status]][icrush-loader-plug-download] | iCrush打包插件 |
 
-[icrush-loader]: https://github.com/yelloxing/iCrush/icrush-loader
-[icrush-style-loader]: https://github.com/yelloxing/iCrush/icrush-style-loader
-[icrush-loader-plug]: https://github.com/yelloxing/iCrush/icrush-loader-plug
+[icrush-loader]: https://github.com/yelloxing/iCrush/tree/master/icrush-loader
+[icrush-style-loader]: https://github.com/yelloxing/iCrush/tree/master/icrush-style-loader
+[icrush-loader-plug]: https://github.com/yelloxing/iCrush/tree/master/icrush-loader-plug
 
 [icrush-loader-status]: https://img.shields.io/npm/v/icrush-loader.svg
 [icrush-style-loader-status]: https://img.shields.io/npm/v/icrush-style-loader.svg
