@@ -1,6 +1,9 @@
 <template>
   <div>
     {{info}}
+    <span class='inner'>
+      内部的
+    </span>
   </div>
 </template>
 
@@ -17,5 +20,10 @@
 <style>
   div {
     color: red;
+  }
+
+  span,
+  .inner {
+    color: blue;
   }
 </style>

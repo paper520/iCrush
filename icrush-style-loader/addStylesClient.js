@@ -16,6 +16,7 @@ export default function addStylesClient(parentId, list, isICrushStyle) {
     // 如果是iCrush内置样式，添加data-icrush-hash
     if (isICrushStyle) {
         style = style.replace(/( {0,}){/g, "[" + parentId + "]{");
+        style = style.replace(/( {0,}),/g, "[" + parentId + "],");
     }
 
     styleElement.innerHTML = style;
