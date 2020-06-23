@@ -24,6 +24,6 @@
 
   span,
   .inner {
-    color: blue;
+    color: rgb(26, 26, 218);
   }
 </style>

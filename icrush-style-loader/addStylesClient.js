@@ -15,8 +15,32 @@ export default function addStylesClient(parentId, list, isICrushStyle) {
 
     // 如果是iCrush内置样式，添加data-icrush-hash
     if (isICrushStyle) {
-        style = style.replace(/( {0,}){/g, "[" + parentId + "]{");
-        style = style.replace(/( {0,}),/g, "[" + parentId + "],");
+
+        style = style.replace(/( {0,}){/g, "{");
+        style = style.replace(/( {0,}),/g, ",");
+
+        let temp = "";
+        let isSpecial = false, isContent = false;
+        for (let i = 0; i < style.length; i++) {
+            if (style[i] == '{' && !isSpecial) {
+                isContent = true;
+                temp += "[" + parentId + "]";
+            } else if (style[i] == '}' && !isSpecial) {
+                isContent = false;
+            } else if (style[i] == '/' && style[i + 1] == '*') {
+                isSpecial = true;
+            } else if (style[i] == '*' && style[i + 1] == '/') {
+                isSpecial = false;
+            } else if (style[i] == ',' && !isSpecial && !isContent) {
+                temp += "[" + parentId + "]";
+            }
+
+            temp+=style[i];
+
+        }
+
+        style=temp;
+
     }
 
     styleElement.innerHTML = style;
