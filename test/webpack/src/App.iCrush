@@ -1,77 +1,29 @@
 <template>
   <div>
-    <label for=''>测试</label>
-    <label>test</label>
-    <input class='itc' id='itd1' i-model='info' />
-    <input class='itc' id='itd2' i-model='info2' />
-    文本{{info}}
-    <pre>
-      111111111111111111111{{info}}
-      222222222222222222222222
-    </pre>
-    <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-    </ul>
-
-    <pre>
-      第一段
-      第二段
-    </pre>
-
-    <span i-bind='info'></span>
-    <span i-bind:info='info'></span>
-
-    <page1></page1>
-
-    <hr />
-    <button @click="usePage2()">使用2</button>
-    <component :is="page"></component>
-
+    {{info}}
+    <span class='inner'>
+      内部的
+    </span>
   </div>
 </template>
 
 <script>
-  import page1 from './pages/page1.iCrush';
-  /* import page2 from './pages/page2.iCrush';*/
-
-  console.log(page1);
-
-  import pages from "./lazy-load";
-
-  let page2 = null;
-  pages.page2().then(function (callback) {
-    page2 = callback.default;
-  });
-
   export default {
     data() {
       return {
-        info: "11111111",
-        info2: "2222222222",
-        page: page1
+        info: "测试用例"
       };
-    },
-    methods: {
-      usePage2() {
-
-        this.page = page2;
-        console.log('===========');
-      }
-    },
-    component: {
-      page1
     }
   };
 </script>
 
 <style>
-  label {
+  div {
     color: red;
   }
-  pre{
-    font-size:10px;
-    color:blue;
+
+  span,
+  .inner {
+    color: rgb(26, 26, 218);
   }
 </style>

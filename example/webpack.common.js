@@ -1,5 +1,4 @@
-const iCrushLoaderPlugin = require('../../icrush-loader-plug/index.js');
-const resolve = require('path').resolve;
+const iCrushLoaderPlugin = require('icrush-loader-plug');
 
 module.exports = {
   entry: ['./src/entry.js'],
@@ -7,11 +6,6 @@ module.exports = {
     path: __dirname,
     filename: 'build/main.js'
   },
-  resolve: {
-    alias: {
-        'icrush': resolve(__dirname, '../../dist/iCrush.babel.js')
-    }
-},
   module: {
     rules: [{
       test: /\.js$/,
@@ -20,7 +14,7 @@ module.exports = {
     }, {
       test: /\.iCrush$/,
       exclude: /node_modules/,
-      loader: ['../../icrush-loader/index.js']
+      loader: ['icrush-loader']
     }, {
       test: /\.(png|jpg|jpeg|gif|bmp)$/,
       loader: [{
@@ -33,7 +27,7 @@ module.exports = {
       }]
     }, {
       test: /\.css$/,
-      loader: ['../../icrush-style-loader/index.js', 'css-loader', 'postcss-loader']
+      loader: ['icrush-style-loader', 'css-loader', 'postcss-loader', 'sass-loader']
     }]
   },
   plugins: [

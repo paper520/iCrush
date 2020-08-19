@@ -1,0 +1,37 @@
+<template>
+  <div>
+    {{info}}
+    <button @click='show'>点击查看</button>
+    <span>
+      span:{{info}}
+    </span>
+  </div>
+</template>
+
+<script>
+  export default {
+    data() {
+      return {
+        info: "webpack 例子"
+      };
+    },
+    methods: {
+      show() {
+        alert("这是一个" + this.info);
+      }
+    }
+  };
+</script>
+
+<style>
+  div {
+    color: blue;
+    font-weight: 800;
+    font-size: 40px;
+
+    &>button,
+    &>span {
+      background-color: red;
+    }
+  }
+</style>

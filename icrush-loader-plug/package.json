@@ -1,0 +1,25 @@
+{
+  "name": "icrush-loader-plug",
+  "version": "0.2.1",
+  "description": "📚 iCrush的辅助插件",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yelloxing/iCrush/tree/master/icrush-loader-plug"
+  },
+  "keywords": [
+    "iCrush",
+    "loader",
+    "webpack"
+  ],
+  "bugs": {
+    "url": "https://github.com/yelloxing/iCrush/issues"
+  },
+  "homepage": "https://yelloxing.github.io/iCrush/index.html",
+  "author": "心叶",
+  "license": "MIT",
+  "dependencies": {
+    "@yelloxing/core.js": "^0.3.7",
+    "webpack": "^4.42.1"
+  }
+}

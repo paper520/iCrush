@@ -1,0 +1,26 @@
+{
+  "name": "icrush-style-loader",
+  "version": "1.0.3",
+  "description": "📚 iCrush的style-loader",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yelloxing/iCrush/tree/master/icrush-style-loader"
+  },
+  "keywords": [
+    "iCrush",
+    "loader",
+    "style",
+    "webpack"
+  ],
+  "bugs": {
+    "url": "https://github.com/yelloxing/iCrush/issues"
+  },
+  "homepage": "https://yelloxing.github.io/iCrush/index.html",
+  "author": "心叶",
+  "license": "MIT",
+  "dependencies": {
+    "hash-sum": "^2.0.0",
+    "loader-utils": "^2.0.0"
+  }
+}

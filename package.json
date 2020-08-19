@@ -1,6 +1,6 @@
 {
   "name": "icrush",
-  "version": "1.6.0",
+  "version": "2.0.1",
   "description": "📚 一个渐进型的前端小框架。",
   "main": "./dist/iCrush.min.js",
   "scripts": {
@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/yelloxing/iCrush/issues"
   },
-  "homepage": "https://github.com/yelloxing/iCrush/blob/master/docs/index.md",
+  "homepage": "https://yelloxing.github.io/iCrush/index.html",
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
@@ -31,9 +31,6 @@
     "terser": "^4.1.2"
   },
   "dependencies": {
-    "@yelloxing/core.js": "^0.3.7",
-    "hash-sum": "^2.0.0",
-    "webpack": "^4.42.1",
-    "xhtml-engine": "^1.0.5"
+    "@yelloxing/core.js": "^0.3.7"
   }
 }
